@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Shubham Dubey - Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Shubham Dubey - Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Tue, 26 Dec 2017 20:24:50 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/author/shubham0d/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[How to boot linux iso without usb on corrupted bios of lenovo laptops]]></title><description><![CDATA[Grub2 have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.]]></description><link>https://shubham0d.github.io/how-to-boot-linux-iso-without-usb-on-corrupted-bios-of-lenovo-laptops/</link><guid isPermaLink="false">5a42a4586a450b0a8b4cb910</guid><category><![CDATA[Linux]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Tue, 26 Dec 2017 20:19:49 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg" alt="How to boot linux iso without usb on corrupted bios of lenovo laptops"><p>Recent bug(<a href="//bugs.launchpad.net/ubuntu/+source/linux/+bug/1734147?lipi=urn%3Ali%3Apage%3Ad_flagship3_pulse_read%3BpVpEnVj0SW6pQWfu1cO1%2BA%3D%3D">link</a>) in ubuntu 17.10 has become a great pain for lenovo laptop users(also some acer and toshiba laptop models) as their bios get corrupted due some unexpected behavior of intel driver in linux kernel. Because of this bug the users are not able to change their bios settings anymore and even the most important part is that the USB booting is not possible anymore since USB is not recognized in boot options. If you are a distrohopper like me or you want to install or switch to another distribution then this bug can be your nightmare because <em><strong>you are stuck in using ubuntu only</strong></em>.</p>
+<p><em>Let's not get terrified</em>, because their is alternative method to install linux distribution without using usb or any other external media. This method may also be useful for other distrohoppers who want to save time in creating bootable media and also want to save yourself from inserting usb on your system every time, to try live distributions.</p>
+<h1 id="whatcausingtheissue">What causing the issue</h1>
+<p>I am not expert on this but as mention in the bug description it is caused by <em>intel-spi-</em> drivers in the kernel which have altered some bios related code. Due to closed nature of intel bios it is difficult to find out what exactly has altered. It was mentioned by ubuntu developers that patch for this issue will save future system to get affected but already affected user have only way to solve this issue by changing their BIOS chip. So, those who are not ready to go for this solution but want to install another distribution can use below method.</p>
+<h1 id="bootingdirectlyfromisopresentinharddrive">Booting directly from iso present in hard drive</h1>
+<p><em>Grub2</em> have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.</p>
+<h1 id="buthow">But How?</h1>
+<br>
+<ul>
+<li>You need to download the iso of distribution you want to install and place it at any known location inside one of your partitions.</li>
+</ul>
+<p>For demonstration I am using pop!_os(<a href="https://system76.com/pop">link</a>) iso  and save it inside my <em>root(sda2)</em> partition inside folder <em>/home/hackintosh/iso/</em> .<br>
+<img src="https://shubham0d.github.io/content/images/2017/12/isopath.png" alt="How to boot linux iso without usb on corrupted bios of lenovo laptops"></p>
+<ul>
+<li>First rename the file to any simple name (<em>pop.iso</em> in my case) to make things easier.</li>
+<li>Now open the iso through any archive manager.</li>
+<li>Go inside casper folder and view its contain.</li>
+</ul>
+<p><img src="https://shubham0d.github.io/content/images/2017/12/archiveview.png" alt="How to boot linux iso without usb on corrupted bios of lenovo laptops"></p>
+<ul>
+<li>The file with <em><strong>vmlinuz.efi</strong></em> or similar name is your kernel file and <em><strong>initrd.gz</strong></em>( or similar name) is your initial ramdisk whose name you require in next step.</li>
+<li>Now open file <em>/etc/grub.d/40_custom</em> and add this menuentry at the end.</li>
+</ul>
+<pre><code>     menuentry &quot;Pop up&quot; {
+     loopback loop (hd0,2)/home/hackintosh/iso/pop.iso
+     linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename   /home/hackintoshiso/pop.iso noprompt noeject
+     initrd (loop)/casper/initrd.gz
+   }
+</code></pre>
+<blockquote>
+<p>Here in <em>(hd0,2)</em> '0' represent my internal hard disk(sda) and '2' represent my partition number(sda2).</p>
+</blockquote>
+<blockquote>
+<p>In front of linux entry is your kernel name vmlinuz.efi and in front of initrd is initrd.gz file.</p>
+</blockquote>
+<ul>
+<li>Now save this file and run command <em>update-grub</em>.</li>
+</ul>
+<pre><code>$sudo update-grub #or sudo grub-mkconfig -o /boot/grub/grub.cfg
+</code></pre>
+<p>Once the command complete you can reboot your system.</p>
+<p>Inside the boot menu you will get a new entry named '<em>Pop up</em>' which you can select to boot.</p>
+<p>You can run the distribution as Live(if supported) or install it. If you want to perform an installation from the same ISO, you'd need to unmount the ISO image first</p>
+<pre><code>$sudo umount -l /isodevice
+</code></pre>
+<p>Now after knowing this you don't need bootable media anymore.<strong>Cheers!</strong></p>
+</div>]]></content:encoded></item></channel></rss>
