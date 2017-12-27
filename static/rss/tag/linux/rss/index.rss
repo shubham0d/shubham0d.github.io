@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Linux - Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Linux - Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Wed, 27 Dec 2017 08:59:46 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/tag/linux/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[How to boot linux iso without usb on corrupted bios of lenovo laptops]]></title><description><![CDATA[Grub2 have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.]]></description><link>https://shubham0d.github.io/how-to-boot-linux-iso-without-usb-on-corrupted-bios-of-lenovo-laptops/</link><guid isPermaLink="false">5a42a4586a450b0a8b4cb910</guid><category><![CDATA[Linux]]></category><category><![CDATA[Firmware]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Tue, 26 Dec 2017 20:19:49 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg" alt="How to boot linux iso without usb on corrupted bios of lenovo laptops"><p>Recent bug(<a href="//bugs.launchpad.net/ubuntu/+source/linux/+bug/1734147?lipi=urn%3Ali%3Apage%3Ad_flagship3_pulse_read%3BpVpEnVj0SW6pQWfu1cO1%2BA%3D%3D">link</a>) in ubuntu 17.10 has become a great pain for lenovo laptop users(also some acer and toshiba laptop models) as their bios get corrupted due some unexpected behavior of intel driver in linux kernel. Because of this bug the users are not able to change their bios settings anymore and even the most important part is that the USB booting is not possible anymore since USB is not recognized in boot options. If you are a distrohopper like me or you want to install or switch to another distribution then this bug can be your nightmare because <em><strong>you are stuck in using ubuntu only</strong></em>.</p>
+<p><em>Let's not get terrified</em>, because their is alternative method to install linux distribution without using usb or any other external media. This method may also be useful for other distrohoppers who want to save time in creating bootable media and also want to save yourself from inserting usb on your system every time, to try live distributions.</p>
+<h1 id="whatcausingtheissue">What causing the issue</h1>
+<p>I am not expert on this but as mention in the bug description it is caused by <em>intel-spi-</em> drivers in the kernel which have altered some bios related code. Due to closed nature of intel bios it is difficult to find out what exactly has altered. It was mentioned by ubuntu developers that patch for this issue will save future system to get affected but already affected user have only way to solve this issue by changing their BIOS chip. So, those who are not ready to go for this solution but want to install another distribution can use below method.</p>
+<h1 id="bootingdirectlyfromisopresentinharddrive">Booting directly from iso present in hard drive</h1>
+<p><em>Grub2</em> have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.</p>
+<h1 id="buthow">But How?</h1>
+<br>
+<ul>
+<li>You need to download the iso of distribution you want to install and place it at any known location inside one of your partitions.</li>
+</ul>
+<p>For demonstration I am using pop!_os(<a href="https://system76.com/pop">link</a>) iso  and save it inside my <em>root(sda2)</em> partition inside folder <em>/home/hackintosh/iso/</em> .<br>
+<img src="https://shubham0d.github.io/content/images/2017/12/isopath.png" alt="How to boot linux iso without usb on corrupted bios of lenovo laptops"></p>
+<ul>
+<li>First rename the file to any simple name (<em>pop.iso</em> in my case) to make things easier.</li>
+<li>Now open the iso through any archive manager.</li>
+<li>Go inside casper folder and view its contain.</li>
+</ul>
+<p><img src="https://shubham0d.github.io/content/images/2017/12/archiveview.png" alt="How to boot linux iso without usb on corrupted bios of lenovo laptops"></p>
+<ul>
+<li>The file with <em><strong>vmlinuz.efi</strong></em> or similar name is your kernel file and <em><strong>initrd.gz</strong></em>( or similar name) is your initial ramdisk whose name you require in next step.</li>
+<li>Now open file <em>/etc/grub.d/40_custom</em> and add this menuentry at the end.</li>
+</ul>
+<pre><code>     menuentry &quot;Pop up&quot; {
+     loopback loop (hd0,2)/home/hackintosh/iso/pop.iso
+     linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename   /home/hackintoshiso/pop.iso noprompt noeject
+     initrd (loop)/casper/initrd.gz
+   }
+</code></pre>
+<blockquote>
+<p>Here in <em>(hd0,2)</em> '0' represent my internal hard disk(sda) and '2' represent my partition number(sda2).</p>
+</blockquote>
+<blockquote>
+<p>In front of linux entry is your kernel name vmlinuz.efi and in front of initrd is initrd.gz file.</p>
+</blockquote>
+<ul>
+<li>Now save this file and run command <em>update-grub</em>.</li>
+</ul>
+<pre><code>$sudo update-grub #or sudo grub-mkconfig -o /boot/grub/grub.cfg
+</code></pre>
+<p>Once the command complete you can reboot your system.</p>
+<p>Inside the boot menu you will get a new entry named '<em>Pop up</em>' which you can select to boot.</p>
+<p>You can run the distribution as Live(if supported) or install it. If you want to perform an installation from the same ISO, you'd need to unmount the ISO image first</p>
+<pre><code>$sudo umount -l /isodevice
+</code></pre>
+<p>Now after knowing this you don't need bootable media anymore.<strong>Cheers!</strong></p>
+</div>]]></content:encoded></item><item><title><![CDATA[Using the Ghost editor]]></title><description><![CDATA[<div class="kg-card-markdown"><p>Ghost uses a language called <strong>Markdown</strong> to format text.</p>
+<p>When you go to edit a post and see special characters and colours intertwined between the words, those are Markdown shortcuts which tell Ghost what to do with the words in your document. The biggest benefit of Markdown is that you</p></div>]]></description><link>https://shubham0d.github.io/the-editor/</link><guid isPermaLink="false">5a42059b674043617651b69f</guid><category><![CDATA[Getting started]]></category><category><![CDATA[Linux]]></category><dc:creator><![CDATA[Ghost]]></dc:creator><pubDate>Tue, 26 Dec 2017 08:17:36 GMT</pubDate><media:content url="https://casper.ghost.org/v1.0.0/images/writing.jpg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://casper.ghost.org/v1.0.0/images/writing.jpg" alt="Using the Ghost editor"><p>Ghost uses a language called <strong>Markdown</strong> to format text.</p>
+<p>When you go to edit a post and see special characters and colours intertwined between the words, those are Markdown shortcuts which tell Ghost what to do with the words in your document. The biggest benefit of Markdown is that you can quickly apply formatting as you type, without needing to pause.</p>
+<p>At the bottom of the editor, you'll find a toolbar with basic formatting options to help you get started as easily as possible. You'll also notice that there's a <strong>?</strong> icon, which contains more advanced shortcuts.</p>
+<p>For now, though, let's run you through some of the basics. You'll want to make sure you're editing this post in order to see all the Markdown we've used.</p>
+<h2 id="formattingtext">Formatting text</h2>
+<p>The most common shortcuts are of course, <strong>bold</strong> text, <em>italic</em> text, and <a href="https://example.com">hyperlinks</a>. These generally make up the bulk of any document. You can type the characters out, but you can also use keyboard shortcuts.</p>
+<ul>
+<li><code>CMD/Ctrl + B</code> for Bold</li>
+<li><code>CMD/Ctrl + I</code> for Italic</li>
+<li><code>CMD/Ctrl + K</code> for a Link</li>
+<li><code>CMD/Ctrl + H</code> for a Heading (Press multiple times for h2/h3/h4/etc)</li>
+</ul>
+<p>With just a couple of extra characters here and there, you're well on your way to creating a beautifully formatted story.</p>
+<h2 id="insertingimages">Inserting images</h2>
+<p>Images in Markdown look just the same as links, except they're prefixed with an exclamation mark, like this:</p>
+<p><code>![Image description](/path/to/image.jpg)</code></p>
+<p><img src="https://casper.ghost.org/v1.0.0/images/computer.jpg" alt="Using the Ghost editor"></p>
+<p>Most Markdown editors don't make you type this out, though. In Ghost you can click on the image icon in the toolbar at the bottom of the editor, or you can just click and drag an image from your desktop directly into the editor. Both will upload the image for you and generate the appropriate Markdown.</p>
+<p><em><strong>Important Note:</strong> Ghost does not currently have automatic image resizing, so it's always a good idea to make sure your images aren't gigantic files <strong>before</strong> uploading them to Ghost.</em></p>
+<h2 id="makinglists">Making lists</h2>
+<p>Lists in HTML are a formatting nightmare, but in Markdown they become an absolute breeze with just a couple of characters and a bit of smart automation. For numbered lists, just write out the numbers. For bullet lists, just use <code>*</code> or <code>-</code> or <code>+</code>. Like this:</p>
+<ol>
+<li>Crack the eggs over a bowl</li>
+<li>Whisk them together</li>
+<li>Make an omelette</li>
+</ol>
+<p>or</p>
+<ul>
+<li>Remember to buy milk</li>
+<li>Feed the cat</li>
+<li>Come up with idea for next story</li>
+</ul>
+<h2 id="addingquotes">Adding quotes</h2>
+<p>When you want to pull out a particularly good excerpt in the middle of a piece, you can use <code>&gt;</code> at the beginning of a paragraph to turn it into a Blockquote. You might've seen this formatting before in email clients.</p>
+<blockquote>
+<p>A well placed quote guides a reader through a story, helping them to understand the most important points being made</p>
+</blockquote>
+<p>All themes handles blockquotes slightly differently. Sometimes they'll look better kept shorter, while other times you can quote fairly hefty amounts of text and get away with it. Generally, the safest option is to use blockquotes sparingly.</p>
+<h2 id="dividingthingsup">Dividing things up</h2>
+<p>If you're writing a piece in parts and you just feel like you need to divide a couple of sections distinctly from each other, a horizontal rule might be just what you need. Dropping <code>---</code> on a new line will create a sleek divider, anywhere you want it.</p>
+<hr>
+<p>This should get you going with the vast majority of what you need to do in the editor, but if you're still curious about more advanced tips then check out the <a href="https://shubham0d.github.io/advanced-markdown/">Advanced Markdown Guide</a> - or if you'd rather learn about how Ghost taxononomies work, we've got a overview of <a href="https://shubham0d.github.io/using-tags/">how to use Ghost tags</a>.</p>
+</div>]]></content:encoded></item></channel></rss>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Tutorial - Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Tutorial - Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Wed, 27 Dec 2017 15:15:45 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/tag/tutorial/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Finding file information using different methods]]></title><description><![CDATA[Information about files content can be found using different methods in both windows and linux systems. This knowledge can be handy if you are developing a program or script that is dealing with files.]]></description><link>https://shubham0d.github.io/finding-file-information-using-different-methods/</link><guid isPermaLink="false">5a43858e98308b0f6c141754</guid><category><![CDATA[Tutorial]]></category><category><![CDATA[Analysis]]></category><category><![CDATA[Linux]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Wed, 27 Dec 2017 12:06:35 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/file-types-.png.jpeg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><h1 id="1findingfileinformationusingextensions">1) Finding file information using extensions</h1>
+<br>
+A common way to analysis the detail of a file is using the extensions of the file. Extension is a set of characters at the end of the file name
+separated by the final dot(.) from the filename.
+<blockquote>
+<img src="https://shubham0d.github.io/content/images/2017/12/file-types-.png.jpeg" alt="Finding file information using different methods"><p><strong>Example</strong>: In a file with name “<em>dolphin.jpg</em>”, dolphin is the name of file whereas jpg is the file extension which tells the file type is actually a <em>image/jpeg</em> file.</p>
+</blockquote>
+<h2 id="usingextensionsdetailtofindfileinfo">Using extensions detail to find file info</h2>
+<p>In linux based systems the filetype info through extension is stored on location <em>/usr/share/misc/magic</em> as a structure whereas same information can be found on windows registry at <em>HKEYCLASSESROOT</em> subtree.<br>
+<em>Given below is the part of linux filetype structure</em>:</p>
+<pre><code>  text/html                             html htm shtml;
+  text/css                              css;
+  text/xml                              xml rss;
+  image/gif                             gif;
+  image/jpeg                            jpeg jpg;
+  application/x-javascript              js;
+  text/plain                            txt;
+  text/x-component                      htc;
+  text/mathml                           mml;
+  image/png                             png;
+  image/x-icon                          ico;
+  image/x-jng                           jng;
+  image/vnd.wap.wbmp                    wbmp;
+  application/java-archive              jar war ear;
+  application/mac-binhex40              hqx;
+  application/pdf                       pdf;
+  application/x-cocoa                   cco;
+  application/x-java-archive-diff       jardiff;
+  application/x-java-jnlp-file          jnlp;
+  application/x-makeself                run;
+  application/x-perl                    pl pm;
+  application/x-pilot                   prc pdb;
+  application/x-rar-compressed          rar;
+  application/x-redhat-package-manager  rpm;
+  application/x-sea                     sea;
+  application/x-shockwave-flash         swf;
+  application/x-stuffit                 sit;
+  application/x-tcl                     tcl tk;
+  application/x-x509-ca-cert            der pem crt;
+  application/x-xpinstall               xpi;
+  application/zip                       zip;
+  application/octet-stream              deb;
+  application/octet-stream              bin exe dll;
+  application/octet-stream              dmg;
+  application/octet-stream              eot;
+  application/octet-stream              iso img;
+  application/octet-stream              msi msp msm;
+  audio/mpeg                            mp3;
+  audio/x-realaudio                     ra;
+  video/mpeg                            mpeg mpg;
+  video/quicktime                       mov;
+  video/x-flv                           flv;
+  video/x-msvideo                       avi;
+  video/x-ms-wmv                        wmv;
+  video/x-ms-asf                        asx asf;
+  video/x-mng                           mng;
+</code></pre>
+<p>Advantage of using these sources is reliability as they are stored by operating system default itself and its also easy to use and handle across different programs.<br>
+The issue with getting dependent on file extension is that extensions are a convention that are not enforced by the file system or OS. A user can change a extension and the file can still be used by programs.</p>
+<h1 id="2findingfileinformationusingmagicnumber">2) Finding file information using magic number</h1>
+<p>Much reliable way to find any file details can be using Header signature of a file.<br>
+Typically file header contains metadata about the file to help a software application validate the file content is correct or not, load the data and view or process the data. Header signature or also called magic number typically are at the start of the file and allows a program to initially determine if the file is valid by first checking presence of number.<br>
+Often quoted example is JPEG byte sequence <em>0xFF 0xD8 0xFF 0xE0</em>, appear as the characters <em>ÿØÿà</em> when JPEG file viewed in a hex/ASCII editor.</p>
+<p><img src="https://shubham0d.github.io/content/images/2017/12/xxd-2.png" alt="Finding file information using different methods"></p>
+<p>Using these magic number has advantage over using file extension as these number produce accurate result of file type. Manipulating these number will result the file to be not identified by application that will process it.</p>
+<h2 id="usingmagicnumbertofindfileinfo">Using magic number to find file info</h2>
+<p>You can get hexadecimal magic number of a program using any hexeditor tool in linux or windows system. For example in linux system you can use xxd as you hex editor.</p>
+<pre><code>$xxd filename
+</code></pre>
+<p>Once you find the magic number you can compare them with the magic numbers of different format.</p>
+<blockquote>
+<p>You can also use file command (which exatly done the same to find the file<br>
+type using magic numbers).<br>
+<img src="https://shubham0d.github.io/content/images/2017/12/fileCommand.png" alt="Finding file information using different methods"></p>
+</blockquote>
+<h1 id="3findingfileinformationbyanalysingthecontaininsidethefile">3) Finding file information by analysing the contain inside the file</h1>
+<p>Most of the file we deal in real are text based(containing ASCII characters).<br>
+A text based file can be analysed by looking at its content.For example for programming files we can look at the header at the starting of code to find the programming language used. All programing code has includes at the starting of program in their defined format or have shebang <em>‘#!/bin/program’</em> at the start.</p>
+<pre><code>#include&lt;stduo.h&gt;                        C/C++
+#!/bin/bash                              Bash executable file
+#!/bin/sh                                sh executable
+#!/bin/perl                              perl program
+#!/bin/ruby                              ruby program
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;   xml file
+etc
+</code></pre>
+<p>For configuration file we can look for the syntax type used by common<br>
+formats like <em>yml</em>,<em>ini</em> or <em>xml</em>.</p>
+<blockquote>
+<p>For example we can look for name=value field in case of ini config files.</p>
+</blockquote>
+<p>These header are processed by programs to find how to treat these file or<br>
+through which compiler to run these file. Hence they are mostly included in<br>
+fix formatted files and we can use them to get desirable file info.</p>
+</div>]]></content:encoded></item></channel></rss>
