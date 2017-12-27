@@ -33,6 +33,8 @@
     <meta name="twitter:data1" content="Ghost">
     <meta name="twitter:label2" content="Filed under">
     <meta name="twitter:data2" content="Getting started">
+    <meta property="og:image:width" content="1400">
+    <meta property="og:image:height" content="933">
     
     <script type="application/ld+json">
 {
@@ -53,7 +55,12 @@
     "url": "https://shubham0d.github.io/advanced-markdown/",
     "datePublished": "2017-12-26T08:17:32.000Z",
     "dateModified": "2017-12-26T08:17:31.000Z",
-    "image": "https://casper.ghost.org/v1.0.0/images/advanced.jpg",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://casper.ghost.org/v1.0.0/images/advanced.jpg",
+        "width": 1400,
+        "height": 933
+    },
     "keywords": "Getting started",
     "description": "There are lots of powerful things you can do with the Ghost editor If you&#x27;ve gotten pretty comfortable with all the basics of writing in Ghost, then you may enjoy some more advanced tips about the types of things you can do with Markdown! As with the last post about",
     "mainEntityOfPage": {
@@ -117,7 +124,7 @@
 <p>If you want to get really fancy, you can even add syntax highlighting using <a href="//prismjs.com/">Prism.js</a>.</p>
 <h2 id="fullbleedimages">Full bleed images</h2>
 <p>One neat trick which you can use in Markdown to distinguish between different types of images is to add a <code>#hash</code> value to the end of the source URL, and then target images containing the hash with special styling. For example:</p>
-<p></p>
+<p><amp-img src="https://casper.ghost.org/v1.0.0/images/walking.jpg#full" alt="walking" width="1200" height="800" layout="responsive"></amp-img></p>
 <p>which is styled with...</p>
 <pre><code>img[src$="#full"] {
     max-width: 100vw;

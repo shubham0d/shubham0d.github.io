@@ -34,6 +34,8 @@
     <meta name="twitter:data1" content="Ghost">
     <meta name="twitter:label2" content="Filed under">
     <meta name="twitter:data2" content="Getting started, Linux">
+    <meta property="og:image:width" content="1400">
+    <meta property="og:image:height" content="935">
     
     <script type="application/ld+json">
 {
@@ -54,7 +56,12 @@
     "url": "https://shubham0d.github.io/the-editor/",
     "datePublished": "2017-12-26T08:17:36.000Z",
     "dateModified": "2017-12-26T19:02:18.000Z",
-    "image": "https://casper.ghost.org/v1.0.0/images/writing.jpg",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://casper.ghost.org/v1.0.0/images/writing.jpg",
+        "width": 1400,
+        "height": 935
+    },
     "keywords": "Getting started, Linux",
     "description": "Ghost uses a language called Markdown to format text. When you go to edit a post and see special characters and colours intertwined between the words, those are Markdown shortcuts which tell Ghost what to do with the words in your document. The biggest benefit of Markdown is that you",
     "mainEntityOfPage": {
@@ -115,7 +122,7 @@
 <h2 id="insertingimages">Inserting images</h2>
 <p>Images in Markdown look just the same as links, except they're prefixed with an exclamation mark, like this:</p>
 <p><code>![Image description](/path/to/image.jpg)</code></p>
-<p></p>
+<p><amp-img src="https://casper.ghost.org/v1.0.0/images/computer.jpg" alt="Computer" width="1200" height="800" layout="responsive"></amp-img></p>
 <p>Most Markdown editors don't make you type this out, though. In Ghost you can click on the image icon in the toolbar at the bottom of the editor, or you can just click and drag an image from your desktop directly into the editor. Both will upload the image for you and generate the appropriate Markdown.</p>
 <p><em><strong>Important Note:</strong> Ghost does not currently have automatic image resizing, so it's always a good idea to make sure your images aren't gigantic files <strong>before</strong> uploading them to Ghost.</em></p>
 <h2 id="makinglists">Making lists</h2>
