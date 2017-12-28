@@ -1,4 +1,70 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Wed, 27 Dec 2017 15:15:43 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Finding file information using different methods]]></title><description><![CDATA[Information about files content can be found using different methods in both windows and linux systems. This knowledge can be handy if you are developing a program or script that is dealing with files.]]></description><link>https://shubham0d.github.io/finding-file-information-using-different-methods/</link><guid isPermaLink="false">5a43858e98308b0f6c141754</guid><category><![CDATA[Tutorial]]></category><category><![CDATA[Analysis]]></category><category><![CDATA[Linux]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Wed, 27 Dec 2017 12:06:35 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/file-types-.png.jpeg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><h1 id="1findingfileinformationusingextensions">1) Finding file information using extensions</h1>
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Thu, 28 Dec 2017 07:37:24 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Data Storage virtualization in Linux (Part 1)]]></title><description><![CDATA[Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.]]></description><link>https://shubham0d.github.io/data-storage-virtualization-in-linux/</link><guid isPermaLink="false">5a43fad3c053a010ef42b2e2</guid><category><![CDATA[Virtualization]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Wed, 27 Dec 2017 20:30:41 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/14.PNG" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/14.PNG" alt="Data Storage virtualization in Linux (Part 1)"><p>We can't deny the fact that traditional model of data management and hosting has been changed and user want their data/resources to be centralized and much flexible. By the innovation of virtualization technology it is become much more easier for large organization and even small businesses to centralized not only their storage but also every other thing they came across in IT world. But due to rapid increase in structured and non-structured data, a nice management for storage is required and resources have not to be wasted.</p>
+<p>If we talk about storage as a service(Staas) in cloud computing, if you are a cloud service provider then lots of your resources get wasted since once you allocate a fix storage space to any client, its lots of part get useless since he never use them at once and you are not allowed to allocate them to others. To solve or minimize problem like that, it will be a good initiative to use file data storage as shared storage solution rather then object storage or storage attached network (SAN).<br>
+In this article I will try to get you through step by step procedure of using and managing file storage solution and also uses of <em>qemu-img</em> virtualization. I will even try to get you through some new techniques/operations of disk virtualization which can be really useful at some point to your cloud server.<br>
+I have used all simple techniques which can be easily understandable and are not so eye catching but will really help you at different level of storage system development and management.</p>
+<p><strong>Note:</strong><br>
+All tools used are generally available on most on the linux system, if not then can be easily downloadable via your default online repository. The tested system for these commands is <em>RHEL 7.0</em> but they will work on other linux system in same way or with little steps rearrangements.</p>
+<h2 id="whatisfilestorage">What is file storage?</h2>
+<p>If you are a Staas provider you will one day definitely come across a problem that lots of your storage actually get wasted since if a user purchases 10GB of storage space from you,then you are forced to allocate him his 10GB regardless of the fact that he not gonna use all of his space at once. Another frequent problem can be if your data storage have 100 GB storage left and you are thinking to buy new storage disk in few days. If in the mean time if someone unexpectedly demands you 200 GB storage then you have to refuse him to provide that. But a good provider is which who fulfill all users  requests and provide 24/7 service. So a better solution for that is to use file storage. Through file storage you can scale your storage according to data inside it and even allocate that much of space which you even don't have.</p>
+<p>File Storage are rely on the fact that everything in your operating system is a file. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(<em>/dev/sda</em>) can be done on that with some little tricks or manipulation. For this procedure we use sparse images as our disks file.</p>
+<h3 id="sowhataresparsefile">So, what are sparse file?</h3>
+<p>A sparse file is a specific type of file which aims to use file system space more efficiently by using metadata to represent empty blocks. In the case of a sparse file, blocks are allocated and written dynamically as the actual data is written, rather than at the time the file is created. So the point is if you create a 10Gb sparse file it will not even take 1Mb of your disk space but its property info will show 10GB as it is the allocated space.So lets start the procedure we need to follow with spase file.</p>
+<p>A sparse file can be created by either using <em>truncate</em> or <em>dd</em> utility in linux (another tools are also available).</p>
+<pre><code>$truncate --size=1GB test.img
+</code></pre>
+<p>This will create a 1Gb sparse image <em>test.img</em>. To get same result with dd use</p>
+<pre><code>$dd if=/dev/zero of=test.img bs=1024 count=0 seek=$[1024*1000]
+</code></pre>
+<p>here <em>bs</em> is block size and size is provided by <em>seek</em>, you can also use this for simplicity</p>
+<pre><code>$dd if=/dev/zero of=test.img bs=1 count=0 seek=1G
+</code></pre>
+<p>if you want to allocate the whole disk space at once(which is not a good solution in our case) then you can use <em>fallocate</em> for that</p>
+<pre><code>$fallocate -l 1G test.img
+</code></pre>
+<blockquote>
+<p><em><strong>A little fun trick:</strong></em><br>
+Can I create a 2TB partition on my 1Tb hard disk?<br>
+the ans is yes!.Since sparse file have property to not take the space while creation hence you can use them to do that</p>
+<pre><code>$truncate –size=2TB mylargefile.img
+</code></pre>
+<p>create any desired file system on it</p>
+<pre><code>$mkfs.ext2 mylargefile.img
+$mount mylargefile.img /mnt/
+</code></pre>
+<p>now you have a 2Tb partition which you can show to your techie friend to impress. :p</p>
+</blockquote>
+<p>After creating the file you can format it and directly mount it to use as your storage but to make it possible to do lots of disk operations, it first have to connect to loop device using <em>losetup</em> utility. To attach the file to your loop device use</p>
+<pre><code>$losetup -f test.img
+</code></pre>
+<p>were <em>test.img</em> is your formated file. To see all such file or block device connected to loop device use</p>
+<pre><code>$losetup -a
+</code></pre>
+<p>you can easily <em>grep</em> the last created loop device by</p>
+<pre><code>$losetup -a | tail -1
+</code></pre>
+<p>After creating the loop device its time to format it. You can use any file system but my recommendation is using ext2 file system(the reason will be explained later).<br>
+To formate use <em>mkfs</em> utils</p>
+<pre><code>$mkfs.ext2 /dev/loop0
+</code></pre>
+<p>If you are working on big data management then <em>xfs filesystem</em> have to be preferred because it works well on handling large file and support larger inode data.<br>
+Now you can mount your formatted loop device to use as your virtual storage to share</p>
+<pre><code>$mount /dev/loop0 /mnt/
+</code></pre>
+<p>To share it across network using service like nfs,open <em>/etc/exports</em> add this entry</p>
+<pre><code>$cat /etc/exports
+/mnt/	*(rw,rsync,no_root_squash)
+</code></pre>
+<p>close it and restart the <em>nfs</em> service by</p>
+<pre><code>$service nfsd restart
+</code></pre>
+<p>once you put the data inside the device you can check its original occupied size by using <em>qemu-img</em> utility</p>
+<pre><code>$qemu-img info test.img
+</code></pre>
+<p>or by <em>du</em> command</p>
+<pre><code>$du -h test.img
+</code></pre>
+<p>Since our file storage is ready, in next part we will look into common disk operations you can do with file storage.<em>Stay tuned!</em></p>
+</div>]]></content:encoded></item><item><title><![CDATA[Finding file information using different methods]]></title><description><![CDATA[Information about files content can be found using different methods in both windows and linux systems. This knowledge can be handy if you are developing a program or script that is dealing with files.]]></description><link>https://shubham0d.github.io/finding-file-information-using-different-methods/</link><guid isPermaLink="false">5a43858e98308b0f6c141754</guid><category><![CDATA[Tutorial]]></category><category><![CDATA[Analysis]]></category><category><![CDATA[Linux]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Wed, 27 Dec 2017 12:06:35 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/file-types-.png.jpeg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><h1 id="1findingfileinformationusingextensions">1) Finding file information using extensions</h1>
 <br>
 A common way to analysis the detail of a file is using the extensions of the file. Extension is a set of characters at the end of the file name
 separated by the final dot(.) from the filename.
