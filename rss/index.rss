@@ -1,4 +1,316 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Thu, 28 Dec 2017 07:37:24 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Data Storage virtualization in Linux (Part 1)]]></title><description><![CDATA[Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.]]></description><link>https://shubham0d.github.io/data-storage-virtualization-in-linux/</link><guid isPermaLink="false">5a43fad3c053a010ef42b2e2</guid><category><![CDATA[Virtualization]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Wed, 27 Dec 2017 20:30:41 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/14.PNG" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/14.PNG" alt="Data Storage virtualization in Linux (Part 1)"><p>We can't deny the fact that traditional model of data management and hosting has been changed and user want their data/resources to be centralized and much flexible. By the innovation of virtualization technology it is become much more easier for large organization and even small businesses to centralized not only their storage but also every other thing they came across in IT world. But due to rapid increase in structured and non-structured data, a nice management for storage is required and resources have not to be wasted.</p>
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Sat, 30 Dec 2017 07:54:08 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Sandboxing and program isolation in linux using many approaches (Part 1)]]></title><description><![CDATA[You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system
+]]></description><link>https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/</link><guid isPermaLink="false">5a4539c707bdab0b3c6e6c34</guid><category><![CDATA[Security]]></category><category><![CDATA[Containers]]></category><category><![CDATA[Virtualization]]></category><category><![CDATA[Linux]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Thu, 28 Dec 2017 18:58:08 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/SandBox.jpg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/SandBox.jpg" alt="Sandboxing and program isolation in linux using many approaches (Part 1)"><p>Securing your system is a big priority for every desktop user or in production environment whether you are system admin or a software developer. The best way of secure your operating system from doubtful programs or process is by sandboxing (also termed as jailing).Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system. It actually made your program isolated from rest of the system by different features avaliable in linux kernel. Sandboxing can be useful for system adminstration if they want to test their task without any damage to system and also for developer for testing their piece of code, even it can help you to create a different environment then your base operating system.It comes in trend due to its extreme use by Paas and Saas providers.<br>
+The idea of jailing is not new since it is available in unix based BSD as bsd jails and solarise as zones from years. But in linux it was started with chroot and is available due to namespaces present in linux kernel.</p>
+<h1 id="namespaces">Namespaces</h1>
+<p>Namespaces are features avaliable in linux to isolate process in different system resource aspects.There are 6 type of namespaces avaliable till kernel 4.0, more can be added in future</p>
+<pre><code>mnt (mount points,filesystems)
+pid (processes)
+net (network stack)
+ipc (System V IPC)
+uts (hostname)
+user (UIDs)
+</code></pre>
+<p>Linux namespace is not new,first one is added in linux in 2008 (linux kernel 2.6) but become useable more recently in linux kernel 3.6 when the work of most complex namespace user namespace has completed.Linux kernel use <em>clone</em>(),<em>unshare</em>() and <em>setns</em>() system call to create and control namespaces.Creation of new namespace is done by <em>clone</em>() system call which also use to start a process.<em>setns</em>() system call adds  a running process to the existing namespace.<em>unshare</em>() call work on process inside namespace and make the caller member of namespace.Its main purpose is also to isolate namespace without having to create a new process or thread (as is done by clone()).You can directly use some services to get the feature of these namespaces.The CLONE_NEW* identifiers is use with these system call to indentify the type of namespace.these three system calls make use of the CLONE_NEW*  as CLONE_NEWIPC , CLONE_NEWNS , CLONE_NEWNET , CLONE_NEWPID , CLONE_NEWUSER , and CLONE_NEWUTS .Process in a namespace can be differ by its unique inode number when it is created.</p>
+<pre><code>#ls -al /proc/&lt;pid&gt;/ns
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 ipc -&gt; ipc:[4026532253]
+lrwxrwxrwx 1 root root 0 Feb  7 15:39 mnt -&gt; mnt:[4026532251]
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 net -&gt; net:[4026531957]
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 pid -&gt; pid:[4026532254]
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 user -&gt; user:[4026531837]
+lrwxrwxrwx 1 root root 0 Feb  7 15:39 uts -&gt; uts:[4026532252]
+</code></pre>
+<h3 id="mountnamespace">Mount namespace:-</h3>
+<p>Process view diffrent mount point then the original system mount point /.It create a seprate filesystem tree associated with different process which restrict them to make changes to the root filesystem.</p>
+<h3 id="pidnamespace">Pid namespace</h3>
+<p>Pid namespace isolate a process ID from the main pid hierarchy.A process inside a pid namespace can have same pid as a process outside it and even inside namespace you can have different init with pid 1.</p>
+<h3 id="utsnamespace">Uts namespace:-</h3>
+<p>In uts (Unix Timesharing system) namespace a process can have different set of domainname and hostname then the main system.They use sethostname() and setdomainname() to do that.</p>
+<h3 id="ipcnamespace">IPC namespace:-</h3>
+<p>Use for interprocess communication resources isolation and POSIX message queue.</p>
+<h3 id="usernamespace">User namespace:-</h3>
+<p>It isolate user and group id inside a namespace which allow to have same uid or gid in namespace as in host machine.In your system unprivileged process can create user namespaces in which they have full privileges.</p>
+<h3 id="networknamespaces">Network namespaces:-</h3>
+<p>Inside this namespace processes can have different network stack i.e different network device,ip address,routing table etc.</p>
+<p>Sandboxing tools avaliable in linux use these feature namespaces to isolate process or create new virtual enviornment.A much secure tool will be that which use maximum namespace for isolation.Now lets talk about different methods for sandboxing from soft to hard isolation.</p>
+<h1 id="chroot">chroot</h1>
+<p>chroot is the oldest sandboxing tool avaliable in linux.Its work is same as mount namespace but is implemented much earlier then that. chroot change the root directory for a process to any chroot directory(like /chroot).As the root directory is the top of the filesystem hierarchy, applications are unable to access directories higher up than the root directory, and so are isolated from the rest of the system. This prevents applications inside the chroot from interfering with files elsewhere on your computer.To create a isolated environment in old SystemV based operating system first you need to copy all required packages and libraries to that directory.<br>
+For demonstration I am running &quot;<em>ls</em>&quot; on chroot directory.<br>
+First create a directory to set as root filesystem for a process:-</p>
+<pre><code>$mkdir /chroot
+</code></pre>
+<p>make important required directories inside it.</p>
+<pre><code>$mkdir /chroot/{lib,lib64,bin,etc} 
+</code></pre>
+<p>To get shell inside the chroot you need /<em>bin/bash</em>.</p>
+<pre><code>$cp -v /bin/{bash,ls} /chroot/bin
+</code></pre>
+<p>Now the most important step is to copy the executable and libraries.To  see libraries required for these script run:</p>
+<pre><code>$ldd /bin/bash
+linux-vdso.so.1 (0x00007fff70deb000)
+libncurses.so.5 =&gt; /lib/x86_64-linux-gnu/libncurses.so.5 (0x00007f25e33a9000)
+libtinfo.so.5 =&gt; /lib/x86_64-linux-gnu/libtinfo.so.5 (0x00007f25e317f000)
+libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f25e2f7a000)
+libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f25e2bd6000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f25e360d000)
+</code></pre>
+<pre><code>$ldd /bin/ls
+linux-vdso.so.1 (0x00007fff4f8e6000)
+libselinux.so.1 =&gt; /lib/x86_64-linux-gnu/libselinux.so.1 (0x00007f9f00aec000)
+libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f9f00748000)
+libpcre.so.3 =&gt; /lib/x86_64-linux-gnu/libpcre.so.3 (0x00007f9f004d7000)
+libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f9f002d3000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f9f00d4f000)
+libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f9f000b6000)
+</code></pre>
+<p>now copy these files to the lib or lib64 of /chroot as required.<br>
+Once you have copied all the necessary file.Its time to enter the chroot.</p>
+<pre><code>$sudo chroot /chroot/ /bin/bash
+</code></pre>
+<p>you will be prompt with a shell running inside your virtual environment.Here you don't have much things to run beside '<em>ls</em>' but it has changed the root filesystem for the process to /chroot.<br>
+To get more featured enviornment you can use debootstrap utility to bootstrap a basic debian system</p>
+<pre><code>$debootstrap --arch=amd64 unstable my_deb/
+</code></pre>
+<p>it will download a minimal system to run under chroot.You can use this to even test 32-bit applications on 64-bit systems or for testing your program before installation.To get process management mount <em>proc</em> and other important filesystem to the chroot and to make the content of home lost on exit mount <em>tmpfs</em> at /home//</p>
+<pre><code>$sudo mount -o bind /proc my_deb/proc
+$mount -o bind /dev my_deb/dev
+$mount -t sysfs sysfs my_deb//sys
+
+$mount -t tmpfs -o size=100m tmpfs /home/user
+</code></pre>
+<p>to get internet connection inside</p>
+<pre><code>$sudo cp /etc/resolv.conf /var/chroot/etc/resolv.conf
+</code></pre>
+<p>after that  you are ready to enter inside your enviornment.</p>
+<pre><code>$chroot my_deb/ /bin/bash
+</code></pre>
+<p>Here you get a minimal linux distribution inside your chroot.But it only differ from your host system by mount point only since it only uses mount property as isolator. It has same hostname,ip addr and process running as in the host system. That's why it is very less secure (even given in the man page of chroot) and any running process can still harm your computer by killing your tasks or affecting network based services.</p>
+<blockquote>
+<p><strong>Note</strong>:<br>
+To run graphical applications inside chroot open x server by running this on host system</p>
+<pre><code>$xhost +
+</code></pre>
+<p>and on chroot system</p>
+<pre><code>$export DISPLAY=:0.0
+</code></pre>
+</blockquote>
+<p>On systemd based linux chrooting become preety straight forward. Its needed to define the root directory on the processes as unit file only.</p>
+<pre><code>[Unit]
+Description=my_chroot_Service
+[Service]
+RootDirectory=/chroot/foobar
+ExecStartPre=/usr/local/bin/pre.sh
+ExecStart=/bin/my_program
+RootDirectoryStartOnly=yes
+</code></pre>
+<p>Here <em>RootDirectory=</em> define where the root directory have to be for foobard process.</p>
+<blockquote>
+<p><strong>Note</strong>:<br>
+The program script path have to be inside chroot, that make the full path of that process script as /chroot/bin/my_program'</p>
+</blockquote>
+<p>Before the daemon is started a shell script pre.sh is invoked, whose purpose is to set up the chroot environment, i.e. mount /proc and similar file systems into it, depending on what the service might need. You can start your service by</p>
+<pre><code>#systemctl start my_chroot_Service.service
+</code></pre>
+<h1 id="ipnetns">Ip-netns</h1>
+<p>Ip-netns utility is few of utility that directly use network namespace to create virtual interfaces.<br>
+To create a new network namespace use</p>
+<pre><code>$ip netns add netns1
+</code></pre>
+<p>To check the interfaces inside</p>
+<pre><code>$ip netns exec netns ip addr
+</code></pre>
+<p>you can even get the shell inside it</p>
+<pre><code>$ip netns exec netns /bin/bash
+</code></pre>
+<p>this will take you inside the network namespace which had only single network interface with no ip.So,we are not connected with the external network and hence can't ping.</p>
+<pre><code>$ip netns exec netns ip link set dev lo up
+</code></pre>
+<p>this will bring the loop interface up.But to connect to external network you need to create a virtual ethernet and add it to netns</p>
+<pre><code>$ ip link add veth0 type veth peer name veth1
+$ ip link set veth1 netns netns1
+</code></pre>
+<p>now its time to set the ip to these interfaces</p>
+<pre><code>$ ip netns exec netns1 ifconfig veth1 10.1.1.1/24 up
+$ ifconfig veth0 10.1.1.2/24 up
+</code></pre>
+<h1 id="unshare">Unshare</h1>
+<p>Unshare utility is used to create any namespaces isolated environment and run a program or shell inside it.<br>
+To get a network namespace and run shell inside it</p>
+<pre><code>$unshare --net /bin/bash
+</code></pre>
+<p>The shell you get back will come with different network stack.You can check this by</p>
+<pre><code>$ip addr
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</code></pre>
+<p>To create a user namespace enviornment.</p>
+<pre><code>$unshare --user /bin/bash
+</code></pre>
+<p>you can check your user inside shell by</p>
+<pre><code>$whoami
+nobody
+</code></pre>
+<p>To get pid namespace</p>
+<pre><code>$unshare --pid --fork /bin/bash
+</code></pre>
+<p>inside this namespace you can see all the process but cannot kill anyone.</p>
+<pre><code>$ps -aux |grep firefox
+root      1110 42.6 11.0 1209424 436756 tty1   Sl   23:36   0:15 .firefox1/./firefox
+root      1208  0.0  0.0  12660  1648 pts/2    S+   23:37   0:00 grep firefox
+$kill 1110
+bash: kill: (1110) - No such process
+</code></pre>
+<p>To get whole different process tree isolation you need to mount another proc for namespace</p>
+<pre><code>unshare --pid --fork --mount-proc /bin/bash
+</code></pre>
+<p>In this way you can use unshare to create single namespace.More can be found on man page of unshare.</p>
+<p>*** Thats it for this part. In the next part we will look into some more tools for sandboxing. Stay tuned! ***</p>
+</div>]]></content:encoded></item><item><title><![CDATA[Data Storage virtualization in Linux (Part 2)]]></title><description><![CDATA[In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.]]></description><link>https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/</link><guid isPermaLink="false">5a44a309976cdf0b73fc020d</guid><category><![CDATA[Virtualization]]></category><category><![CDATA[Linux]]></category><category><![CDATA[Cloud computing]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Thu, 28 Dec 2017 08:25:16 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/14-1.PNG" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/14-1.PNG" alt="Data Storage virtualization in Linux (Part 2)"><p>In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.</p>
+<h1 id="generaldiskoperating">General disk operating</h1>
+<h2 id="1ascalingthesizeincreasing">1a) Scaling the size(Increasing)</h2>
+<p>If a user demands more storage then previously allocated then it can be a headache for you since these type of storage doesn't support disk operation like resizing(specially on-line resizing) and you can't put the storage unmount or offline for little time otherwise you will not consider to be good service provider. But with little trick and manipulation you can even archive that also. For that you have to follow the exact procedure that I am using.<br>
+Suppose a user want his space to be increase by 1 Gb (i.e 2Gb total) then first you need to increase the size of the file by 1 Gb. For that we will use the same <em>truncate</em> tool since it work on already created file also and make the file of desired  size.</p>
+<pre><code>$truncate --size=2GB test.img
+or by using qemu-img
+$qemu-img resize test.img +2GB
+</code></pre>
+<p>You will find out that there will be no change in mounted space since the loop device has not detected the increased size. To make it detected to the loop device it have to be first check by <em>e2fsck</em> by</p>
+<pre><code>$e2fsck -f test.img
+</code></pre>
+<p>after that since the file system is only made on 1Gb partition it have to be resized  but the condition is we don't want our data to to be lost or deleted and also we can't handle the break in service by unmounting it for some seconds even. so we need to do on-line resizing by</p>
+<pre><code>$resize2fs test.img
+</code></pre>
+<p>we have specially used <em>ext2</em> file system since online resizing and file checking only works perfectly for <em>ext2</em> file system with <em>resize2fs</em> utility.<br>
+This will make our file partition ready to use but all this changes are not yet detected by loop device so same operations have to be done on loop device.</p>
+<pre><code>$losetup -a |grep mnt
+$losetup -c /dev/loop0
+</code></pre>
+<p>with -c argument in <em>losetup</em> will detect the increment in the size but we still need to make the change in file system for loop device</p>
+<pre><code>$resize2fs /dev/loop0
+</code></pre>
+<p>Now our new storage size is ready to use.</p>
+<h2 id="1bdecreasingthestorage">1b) Decreasing the storage</h2>
+<p>To decrease the partition size it is not required to decrease the size of file by <em>truncate</em> utility since it may make some half data chunks or bad blocks left and due to those bad blocks you will not able to use the remaining space until you format it again.<br>
+So, the best solution can be to just decrease the file system layer on the file by <em>resize2fs</em> command.</p>
+<pre><code>$resize2fs test.img 1G
+</code></pre>
+<p>where 1G is the new decreased size.<br>
+You not need to be worry about the size shown in metadata since the user will only able to use the formated space. And since the file is a sparse file the remaining space will not take any space in your system.<br>
+In looped device we just need to detect the changed size</p>
+<pre><code>$losetup -c /dev/loop0
+</code></pre>
+<p>Now your storage of decreased size is ready.</p>
+<blockquote>
+<p><em><strong>Tip</strong></em>:<br>
+To detach the storage from loop  device use</p>
+<pre><code>$ losetup -d /dev/loop0
+</code></pre>
+</blockquote>
+<h2 id="2backupthedata">2) Backup the data</h2>
+<p>Features that every storage service provider must have are backup,snapshot and clustering. Data snapshot are seem to be less sensible so we will try not to concentrate on it much for now but will talk about that in later part. But if we talk about backup, what this do is to create a backup file which will save all useful data for future disaster recovery.<br>
+So lets make a backup of our storage by using <em>rsync</em> utility.</p>
+<pre><code>$rsync -avz test.img test_backup.img
+</code></pre>
+<p>this will create a <em>testbackup.img</em> file with same data blocks. So every time you run this command 'new changes made since last backup' will be get saved in <em>test_backup.img</em></p>
+<blockquote>
+<p><strong>Warning:</strong> If you create the backup image of you file system through rsync the backup file will not be a sparse file so it will allocate all of the space at once.</p>
+</blockquote>
+<p>although it looks simple but it is not much efficient solution since once data starts overwriting in some blocks in original storage image it will be exactly get copied in backup image.<br>
+So a better solution can be to rsync the mounted path.</p>
+<pre><code>$rsync -avz /mnt/ /mnt_backup
+</code></pre>
+<p>To make the backup process automatic you can use <em>lsyncd</em> for live synchronization.<br>
+Install lsyncd in RHEL system</p>
+<pre><code>$yum install -y lsyncd
+</code></pre>
+<p>edit the configure file <em>lsyncd.conf</em></p>
+<pre><code>$cat /etc/lsyncd.conf 
+----
+-- User configuration file for lsyncd.
+--
+-- Simple example for default rsync.
+--
+settings = {
+logfile = &quot;/var/log/lsyncd.log&quot;,
+statusFile = &quot;/var/log/lsyncd.stat&quot;,
+statusInterval = 2,
+}
+sync{
+default.rsync,
+source=&quot;/mnt/&quot;,
+target=&quot;192.168.1.15:/backup/&quot;,
+rsync={rsh =&quot;/usr/bin/ssh -l root -i /root/.ssh/id_rsa&quot;,}
+}
+</code></pre>
+<blockquote>
+<p><em><strong>Note</strong></em>:<br>
+First you need to connect to the backup machine by ssh<br>
+using ssh-keygen.</p>
+</blockquote>
+<p>If you want to automate the backup process you can use <em>fsmonitor</em> npm</p>
+<pre><code>$fsmonitor rsync -azP /mnt/ /mnt_backup
+</code></pre>
+<p>Also you can even use <em>rsnapshot</em> for incremental backup.</p>
+<h2 id="3snapshotsofstoragedata">3) Snapshots of storage data</h2>
+<p>Snapshot are facility available in different linux utility to save your storage at particuar state.It can be a useful feature for Staas provider because it will help your storage to revert back to any previous state.</p>
+<p>Snapshot is different then backup because it doesn't take your storage space until changes are made on the storage.To save space it just copy the file that have been deleted.<br>
+For our file storage we will be using <em>qemu-img</em> utility for snapshot. So first create a new snapshot of your storage</p>
+<pre><code>$qemu-img snapshot -c backup_snapshot test.img
+</code></pre>
+<p>-c is use for creating new snapshot.To revert back to a particular state</p>
+<pre><code>$qemu-img snapshot -a 5 test.img
+</code></pre>
+<p>where 5 is the snapshot id.To see all the available snapshots</p>
+<pre><code>$qemu-img -l test.img
+</code></pre>
+<p>To delete a snapshot</p>
+<pre><code>$qemu-img snapshot -d 2 /images/sles11sp1.qcow2
+</code></pre>
+<h2 id="4securingyourvirtualstorage">4) Securing your virtual storage</h2>
+<p>The other profit of using file storage is its easy shipping like a container. But with shipping comes the responsibility to secure your storage. So a good solution for secure your virtual data storage is by protection using encryption so that you need password every time to mount that. For encrypting your storage we will use <em>dm-crypt</em>.<br>
+Lets try the encryption on fresh file storage.</p>
+<pre><code>$truncate encrypted.raw --size=2GB
+</code></pre>
+<p>next setup a LUKS header.</p>
+<pre><code>$cryptsetup luksFormat encrypted.raw
+</code></pre>
+<blockquote>
+<p>Warning: Don't try this with already formated partition because it will delete all the previous data inside partition.</p>
+</blockquote>
+<p>this will prompt to enter a fresh password.<br>
+To gain access to the device</p>
+<pre><code>$cryptsetup open encrypted.raw my_encp.raw
+</code></pre>
+<p><em>myencp.raw</em> is the name of the file whereas our partition get mapped in <em>/dev/mapper/</em>. Now you can create a file system above it</p>
+<pre><code>$mkfs.fstype /dev/mapper/my_encp.raw
+</code></pre>
+<p>Mount the newly created partition anywhere with <em>mount</em></p>
+<pre><code>$mount -t ext2 /dev/mapper/my_encp.raw /mnt/
+</code></pre>
+<p>Once use of the storage is finish you can unmount it.</p>
+<pre><code>$ umount /mnt/
+$ cryptsetup close my_encp.raw
+</code></pre>
+<blockquote>
+<p>Note:<br>
+You can do the same disk scaling and other operations on disk but now you need to make changes to /dev/mapper/my_encp.raw rather then /dev/loop0.</p>
+</blockquote>
+<h2 id="5usingfilestoragevirtualmachine">5) Using File storage virtual machine</h2>
+<p>A greate use of file storage is its use as base storage for virtual machines.Once you decide to use a file storage for a os run on virtual machine other operations like scaling and encryption can also be applied on that.To create a virtual machine instace from our already created storage we will use qemu-kvm utility.</p>
+<pre><code>$qemu-kvm -name &quot;my_os&quot; -m 1024 -smp 2 -drive file=test.img,if=virtio,\
+index=0,media=disk,format=raw -drive file=ubuntu-14.04.iso,index=1,media=cdrom
+</code></pre>
+<p>This will start a new virtual machine with minimal option selected.here -m define the amount of ram allocate and -smp refer to the no of cores.You can read about more available option in qemu-kvm man page or by using <em><strong>qemu-kvm –help</strong></em>.<br>
+To start already  created virtual machine.</p>
+<pre><code>$qemu-kvm -name &quot;my_os&quot; -m 1024 -smp 2 -drive\ file=/images/sles11/hda,if=virtio,index=0,media=disk,format=raw
+</code></pre>
+<h1 id="finalthoughts">Final thoughts</h1>
+<p>File storage can be a good solution for your environment or personal use but what matter is your idea to make it useful at different level of your cloud solution.<br>
+Storage management in case of file storage doesn't end here since there is lot more you can do with it.It can be a powerful as well as flexible solution for storage management but require a tough knowledge to make your job done.</p>
+<p><em><strong>Useful resources</strong></em></p>
+<p>For lsyncd:<a href="//www.linuxtechi.com/install-and-use-lsyncd-on-centos-7-rhel-7/">link</a><br>
+For qemu utility:<a href="https://www.suse.com/documentation/sles11/book_kvm/data/book_kvm.html">link</a><br>
+For Dm-crypt encryption:<a href="https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_a_non-root_file_system">link</a></p>
+</div>]]></content:encoded></item><item><title><![CDATA[Data Storage virtualization in Linux (Part 1)]]></title><description><![CDATA[Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.]]></description><link>https://shubham0d.github.io/data-storage-virtualization-in-linux/</link><guid isPermaLink="false">5a43fad3c053a010ef42b2e2</guid><category><![CDATA[Virtualization]]></category><category><![CDATA[Linux]]></category><category><![CDATA[Cloud computing]]></category><category><![CDATA[Tutorial]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Wed, 27 Dec 2017 20:30:41 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/14.PNG" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/14.PNG" alt="Data Storage virtualization in Linux (Part 1)"><p>We can't deny the fact that traditional model of data management and hosting has been changed and user want their data/resources to be centralized and much flexible. By the innovation of virtualization technology it is become much more easier for large organization and even small businesses to centralized not only their storage but also every other thing they came across in IT world. But due to rapid increase in structured and non-structured data, a nice management for storage is required and resources have not to be wasted.</p>
 <p>If we talk about storage as a service(Staas) in cloud computing, if you are a cloud service provider then lots of your resources get wasted since once you allocate a fix storage space to any client, its lots of part get useless since he never use them at once and you are not allowed to allocate them to others. To solve or minimize problem like that, it will be a good initiative to use file data storage as shared storage solution rather then object storage or storage attached network (SAN).<br>
 In this article I will try to get you through step by step procedure of using and managing file storage solution and also uses of <em>qemu-img</em> virtualization. I will even try to get you through some new techniques/operations of disk virtualization which can be really useful at some point to your cloud server.<br>
 I have used all simple techniques which can be easily understandable and are not so eye catching but will really help you at different level of storage system development and management.</p>

@@ -10,7 +10,6 @@
 
     <link rel="shortcut icon" href="../../favicon.png">
 
-    <meta name="description" content="Learn how to use file storage in Staas service. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.">
     <link rel="shortcut icon" href="../../favicon.png" type="image/png">
     <link rel="canonical" href="../index.html">
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -18,25 +17,24 @@
     <meta property="og:site_name" content="Linuxed and reversed ">
     <meta property="og:type" content="article">
     <meta property="og:title" content="Data Storage virtualization using sparse file in Linux">
-    <meta property="og:description" content="Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.">
-    <meta property="og:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux/">
-    <meta property="og:image" content="https://shubham0d.github.io/content/images/2017/12/14.PNG">
-    <meta property="article:published_time" content="2017-12-27T20:30:41.000Z">
-    <meta property="article:modified_time" content="2017-12-28T07:48:36.000Z">
+    <meta property="og:description" content="In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.">
+    <meta property="og:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/">
+    <meta property="og:image" content="https://shubham0d.github.io/content/images/2017/12/14-1.PNG">
+    <meta property="article:published_time" content="2017-12-28T08:25:16.000Z">
+    <meta property="article:modified_time" content="2017-12-28T18:58:44.000Z">
     <meta property="article:tag" content="Virtualization">
     <meta property="article:tag" content="Linux">
     <meta property="article:tag" content="Cloud computing">
-    <meta property="article:tag" content="Tutorial">
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Data Storage virtualization using sparse file in Linux">
-    <meta name="twitter:description" content="Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.">
-    <meta name="twitter:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux/">
-    <meta name="twitter:image" content="https://shubham0d.github.io/content/images/2017/12/14.PNG">
+    <meta name="twitter:description" content="In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.">
+    <meta name="twitter:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/">
+    <meta name="twitter:image" content="https://shubham0d.github.io/content/images/2017/12/14-1.PNG">
     <meta name="twitter:label1" content="Written by">
     <meta name="twitter:data1" content="Shubham Dubey">
     <meta name="twitter:label2" content="Filed under">
-    <meta name="twitter:data2" content="Virtualization, Linux, Cloud computing, Tutorial">
+    <meta name="twitter:data2" content="Virtualization, Linux, Cloud computing">
     <meta property="og:image:width" content="1022">
     <meta property="og:image:height" content="575">
     
@@ -62,17 +60,17 @@
         "sameAs": []
     },
     "headline": "Data Storage virtualization using sparse file in Linux",
-    "url": "https://shubham0d.github.io/data-storage-virtualization-in-linux/",
-    "datePublished": "2017-12-27T20:30:41.000Z",
-    "dateModified": "2017-12-28T07:48:36.000Z",
+    "url": "https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/",
+    "datePublished": "2017-12-28T08:25:16.000Z",
+    "dateModified": "2017-12-28T18:58:44.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://shubham0d.github.io/content/images/2017/12/14.PNG",
+        "url": "https://shubham0d.github.io/content/images/2017/12/14-1.PNG",
         "width": 1022,
         "height": 575
     },
-    "keywords": "Virtualization, Linux, Cloud computing, Tutorial",
-    "description": "Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.",
+    "keywords": "Virtualization, Linux, Cloud computing",
+    "description": "In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://shubham0d.github.io/"
@@ -104,83 +102,163 @@
         <article class="post">
 
             <header class="post-header">
-                <h1 class="post-title">Data Storage virtualization in Linux (Part 1)</h1>
+                <h1 class="post-title">Data Storage virtualization in Linux (Part 2)</h1>
                 <section class="post-meta">
                     <p class="author">by <a href="../../author/shubham0d/index.html">Shubham Dubey</a></p>
                     <time class="post-date" datetime="2017-12-28">2017-12-28</time>
                 </section>
             </header>
             <figure class="post-image">
-                <amp-img src="https://shubham0d.github.io/content/images/2017/12/14.PNG" width="600" height="400" layout="responsive"></amp-img>
+                <amp-img src="https://shubham0d.github.io/content/images/2017/12/14-1.PNG" width="600" height="400" layout="responsive"></amp-img>
             </figure>
             <section class="post-content">
 
-                <div class="kg-card-markdown"><p>We can't deny the fact that traditional model of data management and hosting has been changed and user want their data/resources to be centralized and much flexible. By the innovation of virtualization technology it is become much more easier for large organization and even small businesses to centralized not only their storage but also every other thing they came across in IT world. But due to rapid increase in structured and non-structured data, a nice management for storage is required and resources have not to be wasted.</p>
-<p>If we talk about storage as a service(Staas) in cloud computing, if you are a cloud service provider then lots of your resources get wasted since once you allocate a fix storage space to any client, its lots of part get useless since he never use them at once and you are not allowed to allocate them to others. To solve or minimize problem like that, it will be a good initiative to use file data storage as shared storage solution rather then object storage or storage attached network (SAN).<br>
-In this article I will try to get you through step by step procedure of using and managing file storage solution and also uses of <em>qemu-img</em> virtualization. I will even try to get you through some new techniques/operations of disk virtualization which can be really useful at some point to your cloud server.<br>
-I have used all simple techniques which can be easily understandable and are not so eye catching but will really help you at different level of storage system development and management.</p>
-<p><strong>Note:</strong><br>
-All tools used are generally available on most on the linux system, if not then can be easily downloadable via your default online repository. The tested system for these commands is <em>RHEL 7.0</em> but they will work on other linux system in same way or with little steps rearrangements.</p>
-<h2 id="whatisfilestorage">What is file storage?</h2>
-<p>If you are a Staas provider you will one day definitely come across a problem that lots of your storage actually get wasted since if a user purchases 10GB of storage space from you,then you are forced to allocate him his 10GB regardless of the fact that he not gonna use all of his space at once. Another frequent problem can be if your data storage have 100 GB storage left and you are thinking to buy new storage disk in few days. If in the mean time if someone unexpectedly demands you 200 GB storage then you have to refuse him to provide that. But a good provider is which who fulfill all users  requests and provide 24/7 service. So a better solution for that is to use file storage. Through file storage you can scale your storage according to data inside it and even allocate that much of space which you even don't have.</p>
-<p>File Storage are rely on the fact that everything in your operating system is a file. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(<em>/dev/sda</em>) can be done on that with some little tricks or manipulation. For this procedure we use sparse images as our disks file.</p>
-<h3 id="sowhataresparsefile">So, what are sparse file?</h3>
-<p>A sparse file is a specific type of file which aims to use file system space more efficiently by using metadata to represent empty blocks. In the case of a sparse file, blocks are allocated and written dynamically as the actual data is written, rather than at the time the file is created. So the point is if you create a 10Gb sparse file it will not even take 1Mb of your disk space but its property info will show 10GB as it is the allocated space.So lets start the procedure we need to follow with spase file.</p>
-<p>A sparse file can be created by either using <em>truncate</em> or <em>dd</em> utility in linux (another tools are also available).</p>
-<pre><code>$truncate --size=1GB test.img
+                <div class="kg-card-markdown"><p>In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.</p>
+<h1 id="generaldiskoperating">General disk operating</h1>
+<h2 id="1ascalingthesizeincreasing">1a) Scaling the size(Increasing)</h2>
+<p>If a user demands more storage then previously allocated then it can be a headache for you since these type of storage doesn't support disk operation like resizing(specially on-line resizing) and you can't put the storage unmount or offline for little time otherwise you will not consider to be good service provider. But with little trick and manipulation you can even archive that also. For that you have to follow the exact procedure that I am using.<br>
+Suppose a user want his space to be increase by 1 Gb (i.e 2Gb total) then first you need to increase the size of the file by 1 Gb. For that we will use the same <em>truncate</em> tool since it work on already created file also and make the file of desired  size.</p>
+<pre><code>$truncate --size=2GB test.img
+or by using qemu-img
+$qemu-img resize test.img +2GB
 </code></pre>
-<p>This will create a 1Gb sparse image <em>test.img</em>. To get same result with dd use</p>
-<pre><code>$dd if=/dev/zero of=test.img bs=1024 count=0 seek=$[1024*1000]
+<p>You will find out that there will be no change in mounted space since the loop device has not detected the increased size. To make it detected to the loop device it have to be first check by <em>e2fsck</em> by</p>
+<pre><code>$e2fsck -f test.img
 </code></pre>
-<p>here <em>bs</em> is block size and size is provided by <em>seek</em>, you can also use this for simplicity</p>
-<pre><code>$dd if=/dev/zero of=test.img bs=1 count=0 seek=1G
+<p>after that since the file system is only made on 1Gb partition it have to be resized  but the condition is we don't want our data to to be lost or deleted and also we can't handle the break in service by unmounting it for some seconds even. so we need to do on-line resizing by</p>
+<pre><code>$resize2fs test.img
 </code></pre>
-<p>if you want to allocate the whole disk space at once(which is not a good solution in our case) then you can use <em>fallocate</em> for that</p>
-<pre><code>$fallocate -l 1G test.img
+<p>we have specially used <em>ext2</em> file system since online resizing and file checking only works perfectly for <em>ext2</em> file system with <em>resize2fs</em> utility.<br>
+This will make our file partition ready to use but all this changes are not yet detected by loop device so same operations have to be done on loop device.</p>
+<pre><code>$losetup -a |grep mnt
+$losetup -c /dev/loop0
+</code></pre>
+<p>with -c argument in <em>losetup</em> will detect the increment in the size but we still need to make the change in file system for loop device</p>
+<pre><code>$resize2fs /dev/loop0
+</code></pre>
+<p>Now our new storage size is ready to use.</p>
+<h2 id="1bdecreasingthestorage">1b) Decreasing the storage</h2>
+<p>To decrease the partition size it is not required to decrease the size of file by <em>truncate</em> utility since it may make some half data chunks or bad blocks left and due to those bad blocks you will not able to use the remaining space until you format it again.<br>
+So, the best solution can be to just decrease the file system layer on the file by <em>resize2fs</em> command.</p>
+<pre><code>$resize2fs test.img 1G
+</code></pre>
+<p>where 1G is the new decreased size.<br>
+You not need to be worry about the size shown in metadata since the user will only able to use the formated space. And since the file is a sparse file the remaining space will not take any space in your system.<br>
+In looped device we just need to detect the changed size</p>
+<pre><code>$losetup -c /dev/loop0
+</code></pre>
+<p>Now your storage of decreased size is ready.</p>
+<blockquote>
+<p><em><strong>Tip</strong></em>:<br>
+To detach the storage from loop  device use</p>
+<pre><code>$ losetup -d /dev/loop0
+</code></pre>
+</blockquote>
+<h2 id="2backupthedata">2) Backup the data</h2>
+<p>Features that every storage service provider must have are backup,snapshot and clustering. Data snapshot are seem to be less sensible so we will try not to concentrate on it much for now but will talk about that in later part. But if we talk about backup, what this do is to create a backup file which will save all useful data for future disaster recovery.<br>
+So lets make a backup of our storage by using <em>rsync</em> utility.</p>
+<pre><code>$rsync -avz test.img test_backup.img
+</code></pre>
+<p>this will create a <em>testbackup.img</em> file with same data blocks. So every time you run this command 'new changes made since last backup' will be get saved in <em>test_backup.img</em></p>
+<blockquote>
+<p><strong>Warning:</strong> If you create the backup image of you file system through rsync the backup file will not be a sparse file so it will allocate all of the space at once.</p>
+</blockquote>
+<p>although it looks simple but it is not much efficient solution since once data starts overwriting in some blocks in original storage image it will be exactly get copied in backup image.<br>
+So a better solution can be to rsync the mounted path.</p>
+<pre><code>$rsync -avz /mnt/ /mnt_backup
+</code></pre>
+<p>To make the backup process automatic you can use <em>lsyncd</em> for live synchronization.<br>
+Install lsyncd in RHEL system</p>
+<pre><code>$yum install -y lsyncd
+</code></pre>
+<p>edit the configure file <em>lsyncd.conf</em></p>
+<pre><code>$cat /etc/lsyncd.conf 
+----
+-- User configuration file for lsyncd.
+--
+-- Simple example for default rsync.
+--
+settings = {
+logfile = "/var/log/lsyncd.log",
+statusFile = "/var/log/lsyncd.stat",
+statusInterval = 2,
+}
+sync{
+default.rsync,
+source="/mnt/",
+target="192.168.1.15:/backup/",
+rsync={rsh ="/usr/bin/ssh -l root -i /root/.ssh/id_rsa",}
+}
 </code></pre>
 <blockquote>
-<p><em><strong>A little fun trick:</strong></em><br>
-Can I create a 2TB partition on my 1Tb hard disk?<br>
-the ans is yes!.Since sparse file have property to not take the space while creation hence you can use them to do that</p>
-<pre><code>$truncate –size=2TB mylargefile.img
-</code></pre>
-<p>create any desired file system on it</p>
-<pre><code>$mkfs.ext2 mylargefile.img
-$mount mylargefile.img /mnt/
-</code></pre>
-<p>now you have a 2Tb partition which you can show to your techie friend to impress. :p</p>
+<p><em><strong>Note</strong></em>:<br>
+First you need to connect to the backup machine by ssh<br>
+using ssh-keygen.</p>
 </blockquote>
-<p>After creating the file you can format it and directly mount it to use as your storage but to make it possible to do lots of disk operations, it first have to connect to loop device using <em>losetup</em> utility. To attach the file to your loop device use</p>
-<pre><code>$losetup -f test.img
+<p>If you want to automate the backup process you can use <em>fsmonitor</em> npm</p>
+<pre><code>$fsmonitor rsync -azP /mnt/ /mnt_backup
 </code></pre>
-<p>were <em>test.img</em> is your formated file. To see all such file or block device connected to loop device use</p>
-<pre><code>$losetup -a
+<p>Also you can even use <em>rsnapshot</em> for incremental backup.</p>
+<h2 id="3snapshotsofstoragedata">3) Snapshots of storage data</h2>
+<p>Snapshot are facility available in different linux utility to save your storage at particuar state.It can be a useful feature for Staas provider because it will help your storage to revert back to any previous state.</p>
+<p>Snapshot is different then backup because it doesn't take your storage space until changes are made on the storage.To save space it just copy the file that have been deleted.<br>
+For our file storage we will be using <em>qemu-img</em> utility for snapshot. So first create a new snapshot of your storage</p>
+<pre><code>$qemu-img snapshot -c backup_snapshot test.img
 </code></pre>
-<p>you can easily <em>grep</em> the last created loop device by</p>
-<pre><code>$losetup -a | tail -1
+<p>-c is use for creating new snapshot.To revert back to a particular state</p>
+<pre><code>$qemu-img snapshot -a 5 test.img
 </code></pre>
-<p>After creating the loop device its time to format it. You can use any file system but my recommendation is using ext2 file system(the reason will be explained later).<br>
-To formate use <em>mkfs</em> utils</p>
-<pre><code>$mkfs.ext2 /dev/loop0
+<p>where 5 is the snapshot id.To see all the available snapshots</p>
+<pre><code>$qemu-img -l test.img
 </code></pre>
-<p>If you are working on big data management then <em>xfs filesystem</em> have to be preferred because it works well on handling large file and support larger inode data.<br>
-Now you can mount your formatted loop device to use as your virtual storage to share</p>
-<pre><code>$mount /dev/loop0 /mnt/
+<p>To delete a snapshot</p>
+<pre><code>$qemu-img snapshot -d 2 /images/sles11sp1.qcow2
 </code></pre>
-<p>To share it across network using service like nfs,open <em>/etc/exports</em> add this entry</p>
-<pre><code>$cat /etc/exports
-/mnt/	*(rw,rsync,no_root_squash)
+<h2 id="4securingyourvirtualstorage">4) Securing your virtual storage</h2>
+<p>The other profit of using file storage is its easy shipping like a container. But with shipping comes the responsibility to secure your storage. So a good solution for secure your virtual data storage is by protection using encryption so that you need password every time to mount that. For encrypting your storage we will use <em>dm-crypt</em>.<br>
+Lets try the encryption on fresh file storage.</p>
+<pre><code>$truncate encrypted.raw --size=2GB
 </code></pre>
-<p>close it and restart the <em>nfs</em> service by</p>
-<pre><code>$service nfsd restart
+<p>next setup a LUKS header.</p>
+<pre><code>$cryptsetup luksFormat encrypted.raw
 </code></pre>
-<p>once you put the data inside the device you can check its original occupied size by using <em>qemu-img</em> utility</p>
-<pre><code>$qemu-img info test.img
+<blockquote>
+<p>Warning: Don't try this with already formated partition because it will delete all the previous data inside partition.</p>
+</blockquote>
+<p>this will prompt to enter a fresh password.<br>
+To gain access to the device</p>
+<pre><code>$cryptsetup open encrypted.raw my_encp.raw
 </code></pre>
-<p>or by <em>du</em> command</p>
-<pre><code>$du -h test.img
+<p><em>myencp.raw</em> is the name of the file whereas our partition get mapped in <em>/dev/mapper/</em>. Now you can create a file system above it</p>
+<pre><code>$mkfs.fstype /dev/mapper/my_encp.raw
 </code></pre>
-<p>Since our file storage is ready, in next part we will look into common disk operations you can do with file storage.<em>Stay tuned!</em></p>
+<p>Mount the newly created partition anywhere with <em>mount</em></p>
+<pre><code>$mount -t ext2 /dev/mapper/my_encp.raw /mnt/
+</code></pre>
+<p>Once use of the storage is finish you can unmount it.</p>
+<pre><code>$ umount /mnt/
+$ cryptsetup close my_encp.raw
+</code></pre>
+<blockquote>
+<p>Note:<br>
+You can do the same disk scaling and other operations on disk but now you need to make changes to /dev/mapper/my_encp.raw rather then /dev/loop0.</p>
+</blockquote>
+<h2 id="5usingfilestoragevirtualmachine">5) Using File storage virtual machine</h2>
+<p>A greate use of file storage is its use as base storage for virtual machines.Once you decide to use a file storage for a os run on virtual machine other operations like scaling and encryption can also be applied on that.To create a virtual machine instace from our already created storage we will use qemu-kvm utility.</p>
+<pre><code>$qemu-kvm -name "my_os" -m 1024 -smp 2 -drive file=test.img,if=virtio,\
+index=0,media=disk,format=raw -drive file=ubuntu-14.04.iso,index=1,media=cdrom
+</code></pre>
+<p>This will start a new virtual machine with minimal option selected.here -m define the amount of ram allocate and -smp refer to the no of cores.You can read about more available option in qemu-kvm man page or by using <em><strong>qemu-kvm –help</strong></em>.<br>
+To start already  created virtual machine.</p>
+<pre><code>$qemu-kvm -name "my_os" -m 1024 -smp 2 -drive\ file=/images/sles11/hda,if=virtio,index=0,media=disk,format=raw
+</code></pre>
+<h1 id="finalthoughts">Final thoughts</h1>
+<p>File storage can be a good solution for your environment or personal use but what matter is your idea to make it useful at different level of your cloud solution.<br>
+Storage management in case of file storage doesn't end here since there is lot more you can do with it.It can be a powerful as well as flexible solution for storage management but require a tough knowledge to make your job done.</p>
+<p><em><strong>Useful resources</strong></em></p>
+<p>For lsyncd:<a href="//www.linuxtechi.com/install-and-use-lsyncd-on-centos-7-rhel-7/">link</a><br>
+For qemu utility:<a href="https://www.suse.com/documentation/sles11/book_kvm/data/book_kvm.html">link</a><br>
+For Dm-crypt encryption:<a href="https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_a_non-root_file_system">link</a></p>
 </div>
 
             </section>

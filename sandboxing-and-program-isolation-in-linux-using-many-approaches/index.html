@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Sandboxing and program isolation in linux using many approaches</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=6d33ec5a2a">
+
+    <meta name="description" content="You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system.">
+    <link rel="shortcut icon" href="../favicon.png" type="image/png">
+    <link rel="canonical" href="index.html">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="amp/index.html">
+    
+    <meta property="og:site_name" content="Linuxed and reversed ">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Sandboxing and program isolation in linux using many approaches">
+    <meta property="og:description" content="You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system
+">
+    <meta property="og:url" content="https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/">
+    <meta property="og:image" content="https://shubham0d.github.io/content/images/2017/12/SandBox.jpg">
+    <meta property="article:published_time" content="2017-12-28T18:58:08.000Z">
+    <meta property="article:modified_time" content="2017-12-30T07:53:05.000Z">
+    <meta property="article:tag" content="Security">
+    <meta property="article:tag" content="Containers">
+    <meta property="article:tag" content="Virtualization">
+    <meta property="article:tag" content="Linux">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sandboxing and program isolation in linux using many approaches">
+    <meta name="twitter:description" content="You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system
+">
+    <meta name="twitter:url" content="https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/">
+    <meta name="twitter:image" content="https://shubham0d.github.io/content/images/2017/12/SandBox.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Shubham Dubey">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Security, Containers, Virtualization, Linux">
+    <meta property="og:image:width" content="1140">
+    <meta property="og:image:height" content="728">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Linuxed and reversed ",
+        "logo": "https://shubham0d.github.io/content/images/2017/12/2000px-Free_Software_and_Open_Source_Software_Composite_Logo.svg-1.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Shubham Dubey",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://shubham0d.github.io/content/images/2017/12/IMG_20170218_212118.jpg",
+            "width": 1080,
+            "height": 1920
+        },
+        "url": "https://shubham0d.github.io/author/shubham0d/",
+        "sameAs": []
+    },
+    "headline": "Sandboxing and program isolation in linux using many approaches",
+    "url": "https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/",
+    "datePublished": "2017-12-28T18:58:08.000Z",
+    "dateModified": "2017-12-30T07:53:05.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://shubham0d.github.io/content/images/2017/12/SandBox.jpg",
+        "width": 1140,
+        "height": 728
+    },
+    "keywords": "Security, Containers, Virtualization, Linux",
+    "description": "You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system\n",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://shubham0d.github.io/"
+    }
+}
+    </script>
+
+    <script type="text/javascript" src="../public/ghost-sdk.min.js?v=6d33ec5a2a"></script>
+<script type="text/javascript">
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "90051550b0c1"
+});
+</script>
+    <meta name="generator" content="Ghost 1.19">
+    <link rel="alternate" type="application/rss+xml" title="Linuxed and reversed " href="../rss/index.rss">
+
+</head>
+<body class="post-template tag-security tag-containers tag-virtualization tag-linux">
+
+    <div class="site-wrapper">
+
+        
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="../index.html"><img src="../content/images/2017/12/2000px-Free_Software_and_Open_Source_Software_Composite_Logo.svg-1.png" alt="Linuxed and reversed "></a>
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="../index.html">Home</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="subscribe-button" href="index.html#subscribe">Subscribe</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-security tag-containers tag-virtualization tag-linux ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2017-12-29">29 December 2017</time>
+                        <span class="date-divider">/</span> <a href="../tag/security/index.html">Security</a>
+                </section>
+                <h1 class="post-full-title">Sandboxing and program isolation in linux using many approaches (Part 1)</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(../content/images/2017/12/SandBox.jpg)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown"><p>Securing your system is a big priority for every desktop user or in production environment whether you are system admin or a software developer. The best way of secure your operating system from doubtful programs or process is by sandboxing (also termed as jailing).Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system. It actually made your program isolated from rest of the system by different features avaliable in linux kernel. Sandboxing can be useful for system adminstration if they want to test their task without any damage to system and also for developer for testing their piece of code, even it can help you to create a different environment then your base operating system.It comes in trend due to its extreme use by Paas and Saas providers.<br>
+The idea of jailing is not new since it is available in unix based BSD as bsd jails and solarise as zones from years. But in linux it was started with chroot and is available due to namespaces present in linux kernel.</p>
+<h1 id="namespaces">Namespaces</h1>
+<p>Namespaces are features avaliable in linux to isolate process in different system resource aspects.There are 6 type of namespaces avaliable till kernel 4.0, more can be added in future</p>
+<pre><code>mnt (mount points,filesystems)
+pid (processes)
+net (network stack)
+ipc (System V IPC)
+uts (hostname)
+user (UIDs)
+</code></pre>
+<p>Linux namespace is not new,first one is added in linux in 2008 (linux kernel 2.6) but become useable more recently in linux kernel 3.6 when the work of most complex namespace user namespace has completed.Linux kernel use <em>clone</em>(),<em>unshare</em>() and <em>setns</em>() system call to create and control namespaces.Creation of new namespace is done by <em>clone</em>() system call which also use to start a process.<em>setns</em>() system call adds  a running process to the existing namespace.<em>unshare</em>() call work on process inside namespace and make the caller member of namespace.Its main purpose is also to isolate namespace without having to create a new process or thread (as is done by clone()).You can directly use some services to get the feature of these namespaces.The CLONE_NEW* identifiers is use with these system call to indentify the type of namespace.these three system calls make use of the CLONE_NEW*  as CLONE_NEWIPC , CLONE_NEWNS , CLONE_NEWNET , CLONE_NEWPID , CLONE_NEWUSER , and CLONE_NEWUTS .Process in a namespace can be differ by its unique inode number when it is created.</p>
+<pre><code>#ls -al /proc/&lt;pid&gt;/ns
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 ipc -&gt; ipc:[4026532253]
+lrwxrwxrwx 1 root root 0 Feb  7 15:39 mnt -&gt; mnt:[4026532251]
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 net -&gt; net:[4026531957]
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 pid -&gt; pid:[4026532254]
+lrwxrwxrwx 1 root root 0 Feb  7 13:52 user -&gt; user:[4026531837]
+lrwxrwxrwx 1 root root 0 Feb  7 15:39 uts -&gt; uts:[4026532252]
+</code></pre>
+<h3 id="mountnamespace">Mount namespace:-</h3>
+<p>Process view diffrent mount point then the original system mount point /.It create a seprate filesystem tree associated with different process which restrict them to make changes to the root filesystem.</p>
+<h3 id="pidnamespace">Pid namespace</h3>
+<p>Pid namespace isolate a process ID from the main pid hierarchy.A process inside a pid namespace can have same pid as a process outside it and even inside namespace you can have different init with pid 1.</p>
+<h3 id="utsnamespace">Uts namespace:-</h3>
+<p>In uts (Unix Timesharing system) namespace a process can have different set of domainname and hostname then the main system.They use sethostname() and setdomainname() to do that.</p>
+<h3 id="ipcnamespace">IPC namespace:-</h3>
+<p>Use for interprocess communication resources isolation and POSIX message queue.</p>
+<h3 id="usernamespace">User namespace:-</h3>
+<p>It isolate user and group id inside a namespace which allow to have same uid or gid in namespace as in host machine.In your system unprivileged process can create user namespaces in which they have full privileges.</p>
+<h3 id="networknamespaces">Network namespaces:-</h3>
+<p>Inside this namespace processes can have different network stack i.e different network device,ip address,routing table etc.</p>
+<p>Sandboxing tools avaliable in linux use these feature namespaces to isolate process or create new virtual enviornment.A much secure tool will be that which use maximum namespace for isolation.Now lets talk about different methods for sandboxing from soft to hard isolation.</p>
+<h1 id="chroot">chroot</h1>
+<p>chroot is the oldest sandboxing tool avaliable in linux.Its work is same as mount namespace but is implemented much earlier then that. chroot change the root directory for a process to any chroot directory(like /chroot).As the root directory is the top of the filesystem hierarchy, applications are unable to access directories higher up than the root directory, and so are isolated from the rest of the system. This prevents applications inside the chroot from interfering with files elsewhere on your computer.To create a isolated environment in old SystemV based operating system first you need to copy all required packages and libraries to that directory.<br>
+For demonstration I am running "<em>ls</em>" on chroot directory.<br>
+First create a directory to set as root filesystem for a process:-</p>
+<pre><code>$mkdir /chroot
+</code></pre>
+<p>make important required directories inside it.</p>
+<pre><code>$mkdir /chroot/{lib,lib64,bin,etc} 
+</code></pre>
+<p>To get shell inside the chroot you need /<em>bin/bash</em>.</p>
+<pre><code>$cp -v /bin/{bash,ls} /chroot/bin
+</code></pre>
+<p>Now the most important step is to copy the executable and libraries.To  see libraries required for these script run:</p>
+<pre><code>$ldd /bin/bash
+linux-vdso.so.1 (0x00007fff70deb000)
+libncurses.so.5 =&gt; /lib/x86_64-linux-gnu/libncurses.so.5 (0x00007f25e33a9000)
+libtinfo.so.5 =&gt; /lib/x86_64-linux-gnu/libtinfo.so.5 (0x00007f25e317f000)
+libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f25e2f7a000)
+libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f25e2bd6000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f25e360d000)
+</code></pre>
+<pre><code>$ldd /bin/ls
+linux-vdso.so.1 (0x00007fff4f8e6000)
+libselinux.so.1 =&gt; /lib/x86_64-linux-gnu/libselinux.so.1 (0x00007f9f00aec000)
+libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f9f00748000)
+libpcre.so.3 =&gt; /lib/x86_64-linux-gnu/libpcre.so.3 (0x00007f9f004d7000)
+libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f9f002d3000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f9f00d4f000)
+libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f9f000b6000)
+</code></pre>
+<p>now copy these files to the lib or lib64 of /chroot as required.<br>
+Once you have copied all the necessary file.Its time to enter the chroot.</p>
+<pre><code>$sudo chroot /chroot/ /bin/bash
+</code></pre>
+<p>you will be prompt with a shell running inside your virtual environment.Here you don't have much things to run beside '<em>ls</em>' but it has changed the root filesystem for the process to /chroot.<br>
+To get more featured enviornment you can use debootstrap utility to bootstrap a basic debian system</p>
+<pre><code>$debootstrap --arch=amd64 unstable my_deb/
+</code></pre>
+<p>it will download a minimal system to run under chroot.You can use this to even test 32-bit applications on 64-bit systems or for testing your program before installation.To get process management mount <em>proc</em> and other important filesystem to the chroot and to make the content of home lost on exit mount <em>tmpfs</em> at /home//</p>
+<pre><code>$sudo mount -o bind /proc my_deb/proc
+$mount -o bind /dev my_deb/dev
+$mount -t sysfs sysfs my_deb//sys
+
+$mount -t tmpfs -o size=100m tmpfs /home/user
+</code></pre>
+<p>to get internet connection inside</p>
+<pre><code>$sudo cp /etc/resolv.conf /var/chroot/etc/resolv.conf
+</code></pre>
+<p>after that  you are ready to enter inside your enviornment.</p>
+<pre><code>$chroot my_deb/ /bin/bash
+</code></pre>
+<p>Here you get a minimal linux distribution inside your chroot.But it only differ from your host system by mount point only since it only uses mount property as isolator. It has same hostname,ip addr and process running as in the host system. That's why it is very less secure (even given in the man page of chroot) and any running process can still harm your computer by killing your tasks or affecting network based services.</p>
+<blockquote>
+<p><strong>Note</strong>:<br>
+To run graphical applications inside chroot open x server by running this on host system</p>
+<pre><code>$xhost +
+</code></pre>
+<p>and on chroot system</p>
+<pre><code>$export DISPLAY=:0.0
+</code></pre>
+</blockquote>
+<p>On systemd based linux chrooting become preety straight forward. Its needed to define the root directory on the processes as unit file only.</p>
+<pre><code>[Unit]
+Description=my_chroot_Service
+[Service]
+RootDirectory=/chroot/foobar
+ExecStartPre=/usr/local/bin/pre.sh
+ExecStart=/bin/my_program
+RootDirectoryStartOnly=yes
+</code></pre>
+<p>Here <em>RootDirectory=</em> define where the root directory have to be for foobard process.</p>
+<blockquote>
+<p><strong>Note</strong>:<br>
+The program script path have to be inside chroot, that make the full path of that process script as /chroot/bin/my_program'</p>
+</blockquote>
+<p>Before the daemon is started a shell script pre.sh is invoked, whose purpose is to set up the chroot environment, i.e. mount /proc and similar file systems into it, depending on what the service might need. You can start your service by</p>
+<pre><code>#systemctl start my_chroot_Service.service
+</code></pre>
+<h1 id="ipnetns">Ip-netns</h1>
+<p>Ip-netns utility is few of utility that directly use network namespace to create virtual interfaces.<br>
+To create a new network namespace use</p>
+<pre><code>$ip netns add netns1
+</code></pre>
+<p>To check the interfaces inside</p>
+<pre><code>$ip netns exec netns ip addr
+</code></pre>
+<p>you can even get the shell inside it</p>
+<pre><code>$ip netns exec netns /bin/bash
+</code></pre>
+<p>this will take you inside the network namespace which had only single network interface with no ip.So,we are not connected with the external network and hence can't ping.</p>
+<pre><code>$ip netns exec netns ip link set dev lo up
+</code></pre>
+<p>this will bring the loop interface up.But to connect to external network you need to create a virtual ethernet and add it to netns</p>
+<pre><code>$ ip link add veth0 type veth peer name veth1
+$ ip link set veth1 netns netns1
+</code></pre>
+<p>now its time to set the ip to these interfaces</p>
+<pre><code>$ ip netns exec netns1 ifconfig veth1 10.1.1.1/24 up
+$ ifconfig veth0 10.1.1.2/24 up
+</code></pre>
+<h1 id="unshare">Unshare</h1>
+<p>Unshare utility is used to create any namespaces isolated environment and run a program or shell inside it.<br>
+To get a network namespace and run shell inside it</p>
+<pre><code>$unshare --net /bin/bash
+</code></pre>
+<p>The shell you get back will come with different network stack.You can check this by</p>
+<pre><code>$ip addr
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</code></pre>
+<p>To create a user namespace enviornment.</p>
+<pre><code>$unshare --user /bin/bash
+</code></pre>
+<p>you can check your user inside shell by</p>
+<pre><code>$whoami
+nobody
+</code></pre>
+<p>To get pid namespace</p>
+<pre><code>$unshare --pid --fork /bin/bash
+</code></pre>
+<p>inside this namespace you can see all the process but cannot kill anyone.</p>
+<pre><code>$ps -aux |grep firefox
+root      1110 42.6 11.0 1209424 436756 tty1   Sl   23:36   0:15 .firefox1/./firefox
+root      1208  0.0  0.0  12660  1648 pts/2    S+   23:37   0:00 grep firefox
+$kill 1110
+bash: kill: (1110) - No such process
+</code></pre>
+<p>To get whole different process tree isolation you need to mount another proc for namespace</p>
+<pre><code>unshare --pid --fork --mount-proc /bin/bash
+</code></pre>
+<p>In this way you can use unshare to create single namespace.More can be found on man page of unshare.</p>
+<p>*** Thats it for this part. In the next part we will look into some more tools for sandboxing. Stay tuned! ***</p>
+</div>
+            </section>
+
+            <section class="subscribe-form">
+                <h3 class="subscribe-form-title">Subscribe to Linuxed and reversed </h3>
+                <p>Get the latest posts delivered right to your inbox</p>
+                <form method="post" action="https://shubham0d.github.io/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"><input class="location" type="hidden" name="location"><input class="referrer" type="hidden" name="referrer">
+
+    <div class="form-group">
+        <input class="subscribe-email" type="email" name="email" placeholder="youremail@example.com">
+    </div>
+    <button class="" type="submit"><span>Subscribe</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+
+            </section>
+
+            <footer class="post-full-footer">
+
+                <section class="author-card">
+                        <img class="author-profile-image" src="../content/images/2017/12/IMG_20170218_212118.jpg" alt="Shubham Dubey">
+                    <section class="author-card-content">
+                        <h4 class="author-card-name"><a href="../author/shubham0d/index.html">Shubham Dubey</a></h4>
+                            <p>Read <a href="../author/shubham0d/index.html">more posts</a> by this author.</p>
+                    </section>
+                </section>
+                <div class="post-full-footer-right">
+                    <a class="author-card-button" href="../author/shubham0d/index.html">Read More</a>
+                </div>
+
+            </footer>
+
+
+
+
+            <section class="post-full-comments">
+                <div id="disqus_thread"></div>
+                <script>
+                    var disqus_config = function () {
+                        this.page.url = 'https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/';
+                        this.page.identifier = 'ghost-5a4539c707bdab0b3c6e6c34';
+                    };
+                    (function() {
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://shubham0d.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+            </section>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+
+
+                <article class="post-card post tag-virtualization tag-linux tag-cloud-computing">
+        <a class="post-card-image-link" href="../data-storage-virtualization-in-linux-part-1/index.html">
+            <div class="post-card-image" style="background-image: url(../content/images/2017/12/14-1.PNG)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../data-storage-virtualization-in-linux-part-1/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">Virtualization</span>
+                <h2 class="post-card-title">Data Storage virtualization in Linux (Part 2)</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+                <img class="author-profile-image" src="../content/images/2017/12/IMG_20170218_212118.jpg" alt="Shubham Dubey">
+            <span class="post-card-author"><a href="../author/shubham0d/index.html">Shubham Dubey</a></span>
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="../index.html">
+                <img src="../content/images/2017/12/rock_tux.png" alt="Linuxed and reversed  icon">
+            <span>Linuxed and reversed </span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">Sandboxing and program isolation in linux using many approaches (Part 1)</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="//www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Sandboxing%20and%20program%20isolation%20in%20linux%20using%20many%20approaches%20(Part%201)&amp;url=https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/" onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="//www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/" onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="//www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"></path></svg>
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="../index.html">Linuxed and reversed </a> © 2017</section>
+                <nav class="site-footer-nav">
+                    <a href="../index.html">Latest Posts</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="subscribe" class="subscribe-overlay">
+        <a class="subscribe-overlay-close" href="index.html#"></a>
+        <div class="subscribe-overlay-content">
+                <img class="subscribe-overlay-logo" src="../content/images/2017/12/2000px-Free_Software_and_Open_Source_Software_Composite_Logo.svg-1.png" alt="Linuxed and reversed ">
+            <h1 class="subscribe-overlay-title">Subscribe to Linuxed and reversed </h1>
+            <p class="subscribe-overlay-description">Stay up to date! Get all the latest &amp; greatest posts delivered straight to your inbox</p>
+            <form method="post" action="https://shubham0d.github.io/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"><input class="location" type="hidden" name="location"><input class="referrer" type="hidden" name="referrer">
+
+    <div class="form-group">
+        <input class="subscribe-email" type="email" name="email" placeholder="youremail@example.com">
+    </div>
+    <button class="" type="submit"><span>Subscribe</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=6d33ec5a2a"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+
+    
+
+</body>
+</html>
