@@ -1,4 +1,162 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Linux - Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Linux - Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Sat, 30 Dec 2017 07:54:11 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/tag/linux/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Sandboxing and program isolation in linux using many approaches (Part 1)]]></title><description><![CDATA[You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="//purl.org/dc/elements/1.1/" xmlns:content="//purl.org/rss/1.0/modules/content/" xmlns:atom="//www.w3.org/2005/Atom" version="2.0" xmlns:media="//search.yahoo.com/mrss/"><channel><title><![CDATA[Linux - Linuxed and reversed ]]></title><description><![CDATA[How-to's, Investigations, Reversing and nifty hacks]]></description><link>https://shubham0d.github.io/</link><image><url>https://shubham0d.github.io/favicon.png</url><title>Linux - Linuxed and reversed </title><link>https://shubham0d.github.io/</link></image><generator>Ghost 1.19</generator><lastBuildDate>Sat, 30 Dec 2017 12:40:17 GMT</lastBuildDate><atom:link href="https://shubham0d.github.io/tag/linux/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Sandboxing and program isolation in linux using many approaches (Part 2)]]></title><description><![CDATA[Containers  are tools for isolation which use namespaces to archive that.They are called light weight virtualization because they provide process level isolation only, means they depend on linux kernel.]]></description><link>https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches-part-2/</link><guid isPermaLink="false">5a4770c6fde5050afd2c10bd</guid><category><![CDATA[Security]]></category><category><![CDATA[Virtualization]]></category><category><![CDATA[Linux]]></category><category><![CDATA[Containers]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Sat, 30 Dec 2017 12:34:54 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/SandBox-1.jpg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/SandBox-1.jpg" alt="Sandboxing and program isolation in linux using many approaches (Part 2)"><p>Lets continue with more tools for sandboxing in linux.</p>
+<h1 id="firejail">Firejail</h1>
+<p>Firejail is a SUID sandbox program that is used to isolate program for testing or security purpose. It it written in C and can be configured to use most of the namespaces.To start a service in firejail.</p>
+<pre><code>$firejail firefox
+</code></pre>
+<p>It  will start firefox in a sandbox with root filesystem mounted as read only. To start firefox with only <em>~/Downloads</em> and <em>~/.mozilla</em> mounted for write.</p>
+<pre><code>$firejail --whitelist=~/.mozilla --whitelist=~/Download firefox
+</code></pre>
+<p>Firejail by default uses user namespace and mounts empty temporary filesystems (tmpfs) on top of user home directory in private mode.<br>
+To start a program in private mode</p>
+<pre><code>$firejail --private firefox
+</code></pre>
+<p>to start firejail in new network stack</p>
+<pre><code>$firejail --net=eth0 --whitelist=~/.mozilla --whitelist=~/Download firefox
+</code></pre>
+<p>To assign an IP address to the sandbox</p>
+<pre><code>$firejail --net=eth0 --ip=192.168.1.155 firefox
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>:<br>
+To sandbox all program running by a single user you can change the default shell of that user to /usr/bin/firejail</p>
+<pre><code>$chsh –shell /usr/bin/firejail
+</code></pre>
+</blockquote>
+<h1 id="containers">Containers</h1>
+<p>When learning about the virtualization technologies,the technology that attracts me most is containers because of their easy deployment.Containers (also known as light weight virtualization)  are tools for isolation which use namespaces to archive that.They are better sandboxing utility because they generally use more then one namespaces and they are more focus on creating a whole virtual system instance rather then isolating a single process.Containers are not new technology since they are in unix and linux from decades but due to increase in Saas and Paas uses they became the hot topic since they provide the best secure environment to deliver and use these services.They are called light weight virtualization because they provide process level isolation only, means they depend on linux kernel hence only those instance can be created which uses same base kernel.There are lots of containers avaliable for linux which have gained popularity in few years.</p>
+<h2 id="systemdnspawn">systemd-nspawn</h2>
+<p>systemd nspawn is a utility available default with systemd which create seprate container for isolation.It uses <em>mount</em> and <em>pid</em> namespaces by default but another namespaces can also be configured.<br>
+To create a container or isolated shell you need to download a basic distribution which we have done already using debootstrap.To get inside this container</p>
+<pre><code>$systemd-nspawn -D my_deb
+</code></pre>
+<p>This container is stronger then chroot because it not only has different mount point but also seprate process tree(check it by <em>ps -aux</em>).But still the hostname and ip interfaces are same as host system. To add a own network stack you need to connect to existing network bridge.</p>
+<pre><code>$systemd-nspawn -D  my_deb --network-bridge=br0
+</code></pre>
+<p>this will start the container with network namespace with a pair of <em>veth</em> devices.You can even boot the instance by -b option.</p>
+<pre><code>$systemd-nspawn -bD my_deb 
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>:<br>
+While booting the container you will required to enter password of root user,so first run $<em>passwd</em> inside to set root password.</p>
+</blockquote>
+<p>The whole nspawn project is relatively young hence there is  still lot to develope.</p>
+<h2 id="docker">Docker</h2>
+<p>Docker is the most smartest and prominent container present in linux to run applications environment,it even grab the most attension since few years. Docker containers uses most of the namespaces and cgroups present in systemd for providing strong isolated environment. Docker runs on docker deamon which starts a isolated instance like <em>systemd-nspawn</em> in which any service can be deployed by some tweaks.It can be use as sandboxing tool to run application securely or to deploy some software service inside it.<br>
+To get your first docker container running you need to first start docker deamon then download the base image from dockers online repository.</p>
+<pre><code>$service docker start
+$docker pull kalilinux/kali-linux-docker
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>:<br>
+You can download other docker images also from docker hub <a href="https://hub.docker.com/">https://hub.docker.com/</a>.</p>
+</blockquote>
+<p>It will download the base kali linux image.You can see all the available image on your system by</p>
+<pre><code>$docker images
+REPOSITORY                    TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+kalilinux/kali-linux-docker   latest              63ae5ac8df0f        1 minute ago        325 MB
+centos                        centos6             b9aeeaeb5e17        9 months ago        202.6 MB
+hello-world                   latest              91c95931e552        9 months ago        910 B
+</code></pre>
+<p>To run a program inside your container</p>
+<pre><code>$docker run -i -t kalilinux/kali-linux-docker ls
+bin   dev  home  lib64	mnt  proc  run	 selinux  sys  usr
+boot  etc  lib	 media	opt  root  sbin  srv	  tmp  var
+</code></pre>
+<p>this will start(run) your container ,execute the command and then close the container.To get a intractive shell inside container</p>
+<pre><code class="language-bash">$docker run -t -i kalilinux/kali-linux-docker /bin/bash
+root@24a70cb3095a:/# 
+</code></pre>
+<p>this will get you inside the container where you can do your stuff isolated from your host machine.<em>24a70cb3095a</em> is your container's id,you can check all the running containers by</p>
+<pre><code>$docker ps
+CONTAINER ID        IMAGE                         COMMAND             CREATED              STATUS              PORTS               NAMES
+24a70cb3095a        kalilinux/kali-linux-docker   &quot;/bin/bash&quot;         About a minute ago   Up About a minute                       angry_cori
+</code></pre>
+<p>while installing docker image, docker automatically create a veth for docker which make the docker image to connected to host system. You can check this by <em>$ifconfig</em> and then try to ping your host system.<br>
+At any instance you can save your docker state as a new container by</p>
+<pre><code>$docker commit 24a70cb3095a new_image
+$docker images
+REPOSITORY                    TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+new_image                     latest              a87c73abca9d        6 seconds ago       325 MB
+kalilinux/kali-linux-docker   latest              63ae5ac8df0f        1 hours  ago        325 MB
+centos                        centos6             b9aeeaeb5e17        9 months ago        202.6 MB
+hello-world                   latest              91c95931e552        9 months ago        910 B
+</code></pre>
+<p>you can remove that image by <em>$docker rmi newimage</em>.To stop a container use docker stop and after that remove the files created on host node by that container.</p>
+<pre><code>$docker stop 24a70cb3095a
+$docker rm 24a70cb3095a
+</code></pre>
+<p>For running applications on docker instance you may require to attach it to host system in some way.So,to mount the external storage to docker image you can use <em>-v</em> flag</p>
+<pre><code>$docker run -it -v /temp/:/home/ kalilinux/kali-linux-docker /bin/bash
+</code></pre>
+<p>this will mount <em>/temp/</em> from main system to <em>/home/</em> of host system.To attach docker port to external system port use -p</p>
+<pre><code>docker run -it -v /temp/:/home/ -p 4567:80 kalilinux/kali-linux-docker /bin/bash
+</code></pre>
+<p>this will attach the external port 4567 to the containers port 80. This can be very useful for saas and paas if the deployed application want to connect to external network.<br>
+Running Gui applications on docker can be another requirement many times.Docker doesn't have x server define so to do that you need to mount x server file to docker instance.</p>
+<pre><code>$docker run -it -v -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \ kalilinux/kali-linux-docker /bin/bash
+</code></pre>
+<p>This will forward the X11 socket to container inside docker.<br>
+To ship docker image to another system you need to push it on docker online repository.</p>
+<pre><code>$docker push new_image
+</code></pre>
+<p>you can even save the container image in tar archive.</p>
+<pre><code>$docker export new_image
+</code></pre>
+<p>There is lot more to learn on docker but this article is not intended to get in deep dive of docker but the positive point about docker is its huge tutorials and hacks available online, from that you can easily get a strong understanding of using docker to make your work done.Docker since first release in 2013 had improved strongly and can be easily used for production or testing enviornment because of there easy to use nature. Other solutions made for docker to face all scenario are also huge like kubernetes (a google project for orchestration of docker),swarm and many more services for docker migrations,providing graphical dashboard etc are developing really fast. Automation tool for system admin like puppet and chef are also start to providing support to docker containers.</p>
+<h2 id="iscontainersmeansdocker">Is containers means Docker?</h2>
+<p>The interest of industries in containers developed because of docker.But there are more containers present in industiers that are comparable with docker.</p>
+<h2 id="rocketcoreos">Rocket(Core OS)</h2>
+<p>Rocket containers is open source Core OS Project.Core OS is operating system works on containerizing every applications present inside system.For that they have replaced traditional package manager with the Appc(applications container) which ships application software in containers.They provided reason that it will increase security inside system and will solve the dependence conflict problems having in package installation.They have also created their own golang based container which use strong namespaces feature for isolation available for linux, they named it as Rocket container.Rocket containers are said to be competitor of docker but they are working on providing a much better solution then docker.Rocket container is differ by docker bcuz it doesn't have any deamon apps to run. It directly start rocket run under spawning process.This make the container to already have an <em>init</em> like <em>systemd</em> which can continously monitor it and all application run underneath this initial process.Rocket also support standard image format that can be used by various tool hence even images from other containers like docker can also be used inside it. Rocket containers are still in beginning phase hence not much documentation or tutorial avaliable online,even yet lots of things to be develope into it.It will be really intresting to see where Rocket will be after few years.</p>
+<h2 id="lxc">LXC</h2>
+<p>LXC(Linux container)written in C is the oldest container present in linux.It is more focused on providing complete virtualization solution like <em>qemu</em> <em>KVM</em> it is accomplished through kernel level isolation by namespaces.<br>
+Linux containers run a whole Linux machine (or simply multiple services) inside the isolated environment provided by the Linux kernel, whereas Dockers are replacements of the traditional way of running applications<br>
+and run them in isolated environments, i.e., Docker containers are made to run a single application inside their containers.<br>
+Images for <em>lxc</em> are not easy to create or import images from internet. But latest releases make it little easier to use.</p>
+<pre><code>$sudo apt-get install lxc
+$sudo lxc-create -t my_deb -n my-container
+$sudo lxc-start -n my-container
+</code></pre>
+<p>To login to that continer</p>
+<pre><code>$sudo lxc-console -n my-container -t 1
+</code></pre>
+<p>LXC containers are even capable of nested containerisation,<br>
+which means you can run Docker or any other container<br>
+inside an LXC container without any issues.</p>
+<p><em>systemd</em> starts to provide management utility for <em>nspawn</em>, lxc like containers with number of tools like machinectl and journalctl.</p>
+<h2 id="machinectl">machinectl</h2>
+<p>Its comes pre-install with systemd init manager use to manage and control the state of the systemd based virtual machine and container works underneath systemd service. To see all containers running in your system</p>
+<pre><code>$machinectl -a
+</code></pre>
+<p>this will show all the current running container..host shown is your main system.To get status of any running container.</p>
+<pre><code>$machinectl status my_deb
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>:<br>
+machinectl doesn't show docker containers since docker containers runs behind docker deamon.</p>
+</blockquote>
+<p>To login to a container</p>
+<pre><code>$machinectl login my_deb
+</code></pre>
+<p>To switch off a container:-</p>
+<pre><code>$machinectl poweroff my_deb
+</code></pre>
+<p>To kill a container forcefully:-</p>
+<pre><code>$machinectl -s kill my_deb
+</code></pre>
+<p>To see logs of a container you can use journalctl:-</p>
+<pre><code>$journalctl -M my_deb
+</code></pre>
+<h2 id="arecontainersmatterinindustries">Are containers matter in industries:-</h2>
+<p>Lots of professionals argues that industry is not ready for container solution since they doesn't provide a prominent solution for there problem because of few reasons:-<br>
+1)Containers doesn'tt provide full virtualization.They depends on main kernel and can be broked by doing some little efforts.<br>
+2)Deploying application and managing them inside containers are not easy job to do.<br>
+3)running heavy application inside docker is not good solution.<br>
+But inspite these facts large companies like google and netflix are using containers for there services isolation from many years.And since container like docker are developing with really fast pace other large compaines are also starts to migrate to containers for their virtualizations solution.Thats why it is not wrong to say that containers are next level virualization.Beside those corporations who have shift themself to use containers (docker specially) other are working on creating there own container according to their own enviornment.</p>
+<h2 id="whattogetfromthisarticle">What to get from this article:-</h2>
+<p>Sandboxing are important for every IT professionals,but different professionals may require different solution.So,you may need to figure out what type of isolation is best for your work.<br>
+If you are a developer or application tester Chroot (talked initially) is never a good solution because of its easy escaping nature. Weak container like systemd-nspawn or firejail can be a good solution because of their easy to deployment nature. Using docker like containers for application testing can be little headache as making your container ready for your process to run fluently can be a little painful.<br>
+If you are a Saas or Paas provider containers will always be the best solution for you because of their strong isolation,easy shipping,live migration and clustering like features present.You may go with traditional virtualization solution(virtual machines) but resource management and quick booting like feature can only be grab with containers.</p>
+</div>]]></content:encoded></item><item><title><![CDATA[Sandboxing and program isolation in linux using many approaches (Part 1)]]></title><description><![CDATA[You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system
 ]]></description><link>https://shubham0d.github.io/sandboxing-and-program-isolation-in-linux-using-many-approaches/</link><guid isPermaLink="false">5a4539c707bdab0b3c6e6c34</guid><category><![CDATA[Security]]></category><category><![CDATA[Containers]]></category><category><![CDATA[Virtualization]]></category><category><![CDATA[Linux]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Thu, 28 Dec 2017 18:58:08 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/SandBox.jpg" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/SandBox.jpg" alt="Sandboxing and program isolation in linux using many approaches (Part 1)"><p>Securing your system is a big priority for every desktop user or in production environment whether you are system admin or a software developer. The best way of secure your operating system from doubtful programs or process is by sandboxing (also termed as jailing).Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system. It actually made your program isolated from rest of the system by different features avaliable in linux kernel. Sandboxing can be useful for system adminstration if they want to test their task without any damage to system and also for developer for testing their piece of code, even it can help you to create a different environment then your base operating system.It comes in trend due to its extreme use by Paas and Saas providers.<br>
 The idea of jailing is not new since it is available in unix based BSD as bsd jails and solarise as zones from years. But in linux it was started with chroot and is available due to namespaces present in linux kernel.</p>
 <h1 id="namespaces">Namespaces</h1>
@@ -163,6 +321,13 @@ bash: kill: (1110) - No such process
 <pre><code>unshare --pid --fork --mount-proc /bin/bash
 </code></pre>
 <p>In this way you can use unshare to create single namespace.More can be found on man page of unshare.</p>
+<blockquote>
+<p><strong>Note</strong>:<br>
+Created namespace using unshare can also be combine to create a single shell which uses different namespaces For example:-</p>
+<pre><code>$unshare --pid --fork --user /bin/bash
+</code></pre>
+<p>will create a isolated enviorment using pid and user namespace.</p>
+</blockquote>
 <p>*** Thats it for this part. In the next part we will look into some more tools for sandboxing. Stay tuned! ***</p>
 </div>]]></content:encoded></item><item><title><![CDATA[Data Storage virtualization in Linux (Part 2)]]></title><description><![CDATA[In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.]]></description><link>https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/</link><guid isPermaLink="false">5a44a309976cdf0b73fc020d</guid><category><![CDATA[Virtualization]]></category><category><![CDATA[Linux]]></category><category><![CDATA[Cloud computing]]></category><dc:creator><![CDATA[Shubham Dubey]]></dc:creator><pubDate>Thu, 28 Dec 2017 08:25:16 GMT</pubDate><media:content url="https://shubham0d.github.io/content/images/2017/12/14-1.PNG" medium="image"/><content:encoded><![CDATA[<div class="kg-card-markdown"><img src="https://shubham0d.github.io/content/images/2017/12/14-1.PNG" alt="Data Storage virtualization in Linux (Part 2)"><p>In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.</p>
 <h1 id="generaldiskoperating">General disk operating</h1>
