@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Data Storage virtualization using sparse file in Linux</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=8851e814ec">
+
+    <link rel="shortcut icon" href="../favicon.png" type="image/png">
+    <link rel="canonical" href="index.html">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="amp/index.html">
+    
+    <meta property="og:site_name" content="Linuxed and reversed ">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Data Storage virtualization using sparse file in Linux">
+    <meta property="og:description" content="In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.">
+    <meta property="og:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/">
+    <meta property="og:image" content="https://shubham0d.github.io/content/images/2017/12/14-1.PNG">
+    <meta property="article:published_time" content="2017-12-28T08:25:16.000Z">
+    <meta property="article:modified_time" content="2017-12-28T18:58:44.000Z">
+    <meta property="article:tag" content="Virtualization">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Cloud computing">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Data Storage virtualization using sparse file in Linux">
+    <meta name="twitter:description" content="In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.">
+    <meta name="twitter:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/">
+    <meta name="twitter:image" content="https://shubham0d.github.io/content/images/2017/12/14-1.PNG">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Shubham Dubey">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Virtualization, Linux, Cloud computing">
+    <meta property="og:image:width" content="1022">
+    <meta property="og:image:height" content="575">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Linuxed and reversed ",
+        "logo": "https://shubham0d.github.io/content/images/2017/12/2000px-Free_Software_and_Open_Source_Software_Composite_Logo.svg-1.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Shubham Dubey",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://shubham0d.github.io/content/images/2017/12/IMG_20170218_212118.jpg",
+            "width": 1080,
+            "height": 1920
+        },
+        "url": "https://shubham0d.github.io/author/shubham0d/",
+        "sameAs": []
+    },
+    "headline": "Data Storage virtualization using sparse file in Linux",
+    "url": "https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/",
+    "datePublished": "2017-12-28T08:25:16.000Z",
+    "dateModified": "2017-12-28T18:58:44.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://shubham0d.github.io/content/images/2017/12/14-1.PNG",
+        "width": 1022,
+        "height": 575
+    },
+    "keywords": "Virtualization, Linux, Cloud computing",
+    "description": "In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://shubham0d.github.io/"
+    }
+}
+    </script>
+
+    <script type="text/javascript" src="../public/ghost-sdk.min.js?v=8851e814ec"></script>
+<script type="text/javascript">
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "90051550b0c1"
+});
+</script>
+    <meta name="generator" content="Ghost 1.19">
+    <link rel="alternate" type="application/rss+xml" title="Linuxed and reversed " href="../rss/index.rss">
+
+</head>
+<body class="post-template tag-virtualization tag-linux tag-cloud-computing">
+
+    <div class="site-wrapper">
+
+        
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="../index.html"><img src="../content/images/2017/12/2000px-Free_Software_and_Open_Source_Software_Composite_Logo.svg-1.png" alt="Linuxed and reversed "></a>
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="../index.html">Home</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="subscribe-button" href="index.html#subscribe">Subscribe</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-virtualization tag-linux tag-cloud-computing ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2017-12-28">28 December 2017</time>
+                        <span class="date-divider">/</span> <a href="../tag/virtualization/index.html">Virtualization</a>
+                </section>
+                <h1 class="post-full-title">Data Storage virtualization in Linux (Part 2)</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(../content/images/2017/12/14-1.PNG)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown"><p>In the previous part we talked about how we can create sparse file storage and create file system to mount or share across network. Now we will look into some common disk operations that we can do with this storage like scaling, encryption etc.</p>
+<h1 id="generaldiskoperating">General disk operating</h1>
+<h2 id="1ascalingthesizeincreasing">1a) Scaling the size(Increasing)</h2>
+<p>If a user demands more storage then previously allocated then it can be a headache for you since these type of storage doesn't support disk operation like resizing(specially on-line resizing) and you can't put the storage unmount or offline for little time otherwise you will not consider to be good service provider. But with little trick and manipulation you can even archive that also. For that you have to follow the exact procedure that I am using.<br>
+Suppose a user want his space to be increase by 1 Gb (i.e 2Gb total) then first you need to increase the size of the file by 1 Gb. For that we will use the same <em>truncate</em> tool since it work on already created file also and make the file of desired  size.</p>
+<pre><code>$truncate --size=2GB test.img
+or by using qemu-img
+$qemu-img resize test.img +2GB
+</code></pre>
+<p>You will find out that there will be no change in mounted space since the loop device has not detected the increased size. To make it detected to the loop device it have to be first check by <em>e2fsck</em> by</p>
+<pre><code>$e2fsck -f test.img
+</code></pre>
+<p>after that since the file system is only made on 1Gb partition it have to be resized  but the condition is we don't want our data to to be lost or deleted and also we can't handle the break in service by unmounting it for some seconds even. so we need to do on-line resizing by</p>
+<pre><code>$resize2fs test.img
+</code></pre>
+<p>we have specially used <em>ext2</em> file system since online resizing and file checking only works perfectly for <em>ext2</em> file system with <em>resize2fs</em> utility.<br>
+This will make our file partition ready to use but all this changes are not yet detected by loop device so same operations have to be done on loop device.</p>
+<pre><code>$losetup -a |grep mnt
+$losetup -c /dev/loop0
+</code></pre>
+<p>with -c argument in <em>losetup</em> will detect the increment in the size but we still need to make the change in file system for loop device</p>
+<pre><code>$resize2fs /dev/loop0
+</code></pre>
+<p>Now our new storage size is ready to use.</p>
+<h2 id="1bdecreasingthestorage">1b) Decreasing the storage</h2>
+<p>To decrease the partition size it is not required to decrease the size of file by <em>truncate</em> utility since it may make some half data chunks or bad blocks left and due to those bad blocks you will not able to use the remaining space until you format it again.<br>
+So, the best solution can be to just decrease the file system layer on the file by <em>resize2fs</em> command.</p>
+<pre><code>$resize2fs test.img 1G
+</code></pre>
+<p>where 1G is the new decreased size.<br>
+You not need to be worry about the size shown in metadata since the user will only able to use the formated space. And since the file is a sparse file the remaining space will not take any space in your system.<br>
+In looped device we just need to detect the changed size</p>
+<pre><code>$losetup -c /dev/loop0
+</code></pre>
+<p>Now your storage of decreased size is ready.</p>
+<blockquote>
+<p><em><strong>Tip</strong></em>:<br>
+To detach the storage from loop  device use</p>
+<pre><code>$ losetup -d /dev/loop0
+</code></pre>
+</blockquote>
+<h2 id="2backupthedata">2) Backup the data</h2>
+<p>Features that every storage service provider must have are backup,snapshot and clustering. Data snapshot are seem to be less sensible so we will try not to concentrate on it much for now but will talk about that in later part. But if we talk about backup, what this do is to create a backup file which will save all useful data for future disaster recovery.<br>
+So lets make a backup of our storage by using <em>rsync</em> utility.</p>
+<pre><code>$rsync -avz test.img test_backup.img
+</code></pre>
+<p>this will create a <em>testbackup.img</em> file with same data blocks. So every time you run this command 'new changes made since last backup' will be get saved in <em>test_backup.img</em></p>
+<blockquote>
+<p><strong>Warning:</strong> If you create the backup image of you file system through rsync the backup file will not be a sparse file so it will allocate all of the space at once.</p>
+</blockquote>
+<p>although it looks simple but it is not much efficient solution since once data starts overwriting in some blocks in original storage image it will be exactly get copied in backup image.<br>
+So a better solution can be to rsync the mounted path.</p>
+<pre><code>$rsync -avz /mnt/ /mnt_backup
+</code></pre>
+<p>To make the backup process automatic you can use <em>lsyncd</em> for live synchronization.<br>
+Install lsyncd in RHEL system</p>
+<pre><code>$yum install -y lsyncd
+</code></pre>
+<p>edit the configure file <em>lsyncd.conf</em></p>
+<pre><code>$cat /etc/lsyncd.conf 
+----
+-- User configuration file for lsyncd.
+--
+-- Simple example for default rsync.
+--
+settings = {
+logfile = "/var/log/lsyncd.log",
+statusFile = "/var/log/lsyncd.stat",
+statusInterval = 2,
+}
+sync{
+default.rsync,
+source="/mnt/",
+target="192.168.1.15:/backup/",
+rsync={rsh ="/usr/bin/ssh -l root -i /root/.ssh/id_rsa",}
+}
+</code></pre>
+<blockquote>
+<p><em><strong>Note</strong></em>:<br>
+First you need to connect to the backup machine by ssh<br>
+using ssh-keygen.</p>
+</blockquote>
+<p>If you want to automate the backup process you can use <em>fsmonitor</em> npm</p>
+<pre><code>$fsmonitor rsync -azP /mnt/ /mnt_backup
+</code></pre>
+<p>Also you can even use <em>rsnapshot</em> for incremental backup.</p>
+<h2 id="3snapshotsofstoragedata">3) Snapshots of storage data</h2>
+<p>Snapshot are facility available in different linux utility to save your storage at particuar state.It can be a useful feature for Staas provider because it will help your storage to revert back to any previous state.</p>
+<p>Snapshot is different then backup because it doesn't take your storage space until changes are made on the storage.To save space it just copy the file that have been deleted.<br>
+For our file storage we will be using <em>qemu-img</em> utility for snapshot. So first create a new snapshot of your storage</p>
+<pre><code>$qemu-img snapshot -c backup_snapshot test.img
+</code></pre>
+<p>-c is use for creating new snapshot.To revert back to a particular state</p>
+<pre><code>$qemu-img snapshot -a 5 test.img
+</code></pre>
+<p>where 5 is the snapshot id.To see all the available snapshots</p>
+<pre><code>$qemu-img -l test.img
+</code></pre>
+<p>To delete a snapshot</p>
+<pre><code>$qemu-img snapshot -d 2 /images/sles11sp1.qcow2
+</code></pre>
+<h2 id="4securingyourvirtualstorage">4) Securing your virtual storage</h2>
+<p>The other profit of using file storage is its easy shipping like a container. But with shipping comes the responsibility to secure your storage. So a good solution for secure your virtual data storage is by protection using encryption so that you need password every time to mount that. For encrypting your storage we will use <em>dm-crypt</em>.<br>
+Lets try the encryption on fresh file storage.</p>
+<pre><code>$truncate encrypted.raw --size=2GB
+</code></pre>
+<p>next setup a LUKS header.</p>
+<pre><code>$cryptsetup luksFormat encrypted.raw
+</code></pre>
+<blockquote>
+<p>Warning: Don't try this with already formated partition because it will delete all the previous data inside partition.</p>
+</blockquote>
+<p>this will prompt to enter a fresh password.<br>
+To gain access to the device</p>
+<pre><code>$cryptsetup open encrypted.raw my_encp.raw
+</code></pre>
+<p><em>myencp.raw</em> is the name of the file whereas our partition get mapped in <em>/dev/mapper/</em>. Now you can create a file system above it</p>
+<pre><code>$mkfs.fstype /dev/mapper/my_encp.raw
+</code></pre>
+<p>Mount the newly created partition anywhere with <em>mount</em></p>
+<pre><code>$mount -t ext2 /dev/mapper/my_encp.raw /mnt/
+</code></pre>
+<p>Once use of the storage is finish you can unmount it.</p>
+<pre><code>$ umount /mnt/
+$ cryptsetup close my_encp.raw
+</code></pre>
+<blockquote>
+<p>Note:<br>
+You can do the same disk scaling and other operations on disk but now you need to make changes to /dev/mapper/my_encp.raw rather then /dev/loop0.</p>
+</blockquote>
+<h2 id="5usingfilestoragevirtualmachine">5) Using File storage virtual machine</h2>
+<p>A greate use of file storage is its use as base storage for virtual machines.Once you decide to use a file storage for a os run on virtual machine other operations like scaling and encryption can also be applied on that.To create a virtual machine instace from our already created storage we will use qemu-kvm utility.</p>
+<pre><code>$qemu-kvm -name "my_os" -m 1024 -smp 2 -drive file=test.img,if=virtio,\
+index=0,media=disk,format=raw -drive file=ubuntu-14.04.iso,index=1,media=cdrom
+</code></pre>
+<p>This will start a new virtual machine with minimal option selected.here -m define the amount of ram allocate and -smp refer to the no of cores.You can read about more available option in qemu-kvm man page or by using <em><strong>qemu-kvm –help</strong></em>.<br>
+To start already  created virtual machine.</p>
+<pre><code>$qemu-kvm -name "my_os" -m 1024 -smp 2 -drive\ file=/images/sles11/hda,if=virtio,index=0,media=disk,format=raw
+</code></pre>
+<h1 id="finalthoughts">Final thoughts</h1>
+<p>File storage can be a good solution for your environment or personal use but what matter is your idea to make it useful at different level of your cloud solution.<br>
+Storage management in case of file storage doesn't end here since there is lot more you can do with it.It can be a powerful as well as flexible solution for storage management but require a tough knowledge to make your job done.</p>
+<p><em><strong>Useful resources</strong></em></p>
+<p>For lsyncd:<a href="//www.linuxtechi.com/install-and-use-lsyncd-on-centos-7-rhel-7/">link</a><br>
+For qemu utility:<a href="https://www.suse.com/documentation/sles11/book_kvm/data/book_kvm.html">link</a><br>
+For Dm-crypt encryption:<a href="https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_a_non-root_file_system">link</a></p>
+</div>
+            </section>
+
+            <section class="subscribe-form">
+                <h3 class="subscribe-form-title">Subscribe to Linuxed and reversed </h3>
+                <p>Get the latest posts delivered right to your inbox</p>
+                <form method="post" action="https://shubham0d.github.io/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"><input class="location" type="hidden" name="location"><input class="referrer" type="hidden" name="referrer">
+
+    <div class="form-group">
+        <input class="subscribe-email" type="email" name="email" placeholder="youremail@example.com">
+    </div>
+    <button class="" type="submit"><span>Subscribe</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+
+            </section>
+
+            <footer class="post-full-footer">
+
+                <section class="author-card">
+                        <img class="author-profile-image" src="../content/images/2017/12/IMG_20170218_212118.jpg" alt="Shubham Dubey">
+                    <section class="author-card-content">
+                        <h4 class="author-card-name"><a href="../author/shubham0d/index.html">Shubham Dubey</a></h4>
+                            <p>Read <a href="../author/shubham0d/index.html">more posts</a> by this author.</p>
+                    </section>
+                </section>
+                <div class="post-full-footer-right">
+                    <a class="author-card-button" href="../author/shubham0d/index.html">Read More</a>
+                </div>
+
+            </footer>
+
+
+
+
+            <section class="post-full-comments">
+                <div id="disqus_thread"></div>
+                <script>
+                    var disqus_config = function () {
+                        this.page.url = 'https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/';
+                        this.page.identifier = 'ghost-5a44a309976cdf0b73fc020d';
+                    };
+                    (function() {
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://shubham0d.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+            </section>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(../content/images/2017/12/27494129_l.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— Linuxed and reversed  —</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/virtualization/index.html">Virtualization</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="//www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../sandboxing-and-program-isolation-in-linux-using-many-approaches-part-2/index.html">Sandboxing and program isolation in linux using many approaches (Part 2)</a></li>
+                            <li><a href="../sandboxing-and-program-isolation-in-linux-using-many-approaches/index.html">Sandboxing and program isolation in linux using many approaches (Part 1)</a></li>
+                            <li><a href="../data-storage-virtualization-in-linux/index.html">Data Storage virtualization in Linux (Part 1)</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/virtualization/index.html">See all 3 posts →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-security tag-containers tag-virtualization tag-linux">
+        <a class="post-card-image-link" href="../sandboxing-and-program-isolation-in-linux-using-many-approaches/index.html">
+            <div class="post-card-image" style="background-image: url(../content/images/2017/12/SandBox.jpg)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../sandboxing-and-program-isolation-in-linux-using-many-approaches/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">Security</span>
+                <h2 class="post-card-title">Sandboxing and program isolation in linux using many approaches (Part 1)</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>You can secure your linux system by isolating the malicious program or risky tasks using Sandboxing in different ways to stop it from affecting your main system.Sandboxing means providing a safe environment for a program or software so you can play around it without hurting your system</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+                <img class="author-profile-image" src="../content/images/2017/12/IMG_20170218_212118.jpg" alt="Shubham Dubey">
+            <span class="post-card-author"><a href="../author/shubham0d/index.html">Shubham Dubey</a></span>
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-virtualization tag-linux tag-cloud-computing tag-tutorial">
+        <a class="post-card-image-link" href="../data-storage-virtualization-in-linux/index.html">
+            <div class="post-card-image" style="background-image: url(../content/images/2017/12/14.PNG)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../data-storage-virtualization-in-linux/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">Virtualization</span>
+                <h2 class="post-card-title">Data Storage virtualization in Linux (Part 1)</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+                <img class="author-profile-image" src="../content/images/2017/12/IMG_20170218_212118.jpg" alt="Shubham Dubey">
+            <span class="post-card-author"><a href="../author/shubham0d/index.html">Shubham Dubey</a></span>
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="../index.html">
+                <img src="../content/images/2017/12/rock_tux.png" alt="Linuxed and reversed  icon">
+            <span>Linuxed and reversed </span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">Data Storage virtualization in Linux (Part 2)</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="//www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Data%20Storage%20virtualization%20in%20Linux%20(Part%202)&amp;url=https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/" onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="//www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://shubham0d.github.io/data-storage-virtualization-in-linux-part-1/" onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="//www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"></path></svg>
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="../index.html">Linuxed and reversed </a> © 2018</section>
+                <nav class="site-footer-nav">
+                    <a href="../index.html">Latest Posts</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="subscribe" class="subscribe-overlay">
+        <a class="subscribe-overlay-close" href="index.html#"></a>
+        <div class="subscribe-overlay-content">
+                <img class="subscribe-overlay-logo" src="../content/images/2017/12/2000px-Free_Software_and_Open_Source_Software_Composite_Logo.svg-1.png" alt="Linuxed and reversed ">
+            <h1 class="subscribe-overlay-title">Subscribe to Linuxed and reversed </h1>
+            <p class="subscribe-overlay-description">Stay up to date! Get all the latest &amp; greatest posts delivered straight to your inbox</p>
+            <form method="post" action="https://shubham0d.github.io/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"><input class="location" type="hidden" name="location"><input class="referrer" type="hidden" name="referrer">
+
+    <div class="form-group">
+        <input class="subscribe-email" type="email" name="email" placeholder="youremail@example.com">
+    </div>
+    <button class="" type="submit"><span>Subscribe</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=8851e814ec"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+
+    
+
+</body>
+</html>

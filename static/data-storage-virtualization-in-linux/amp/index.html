@@ -3,40 +3,42 @@
 <head>
     <meta charset="utf-8">
 
-    <title>How to boot linux iso without usb on corrupted bios of lenovo laptops</title>
+    <title>Data Storage virtualization using sparse file in Linux</title>
 
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
 
     <link rel="shortcut icon" href="../../favicon.png">
 
-    <meta name="description" content="Grub2 have the capability to boot directly from iso file. Using this most Linux distro as well as popular rescue CDs can be booted directly from an ISO.">
+    <meta name="description" content="Learn how to use file storage in Staas service. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.">
     <link rel="shortcut icon" href="../../favicon.png" type="image/png">
     <link rel="canonical" href="../index.html">
     <meta name="referrer" content="no-referrer-when-downgrade">
     
     <meta property="og:site_name" content="Linuxed and reversed ">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="How to boot linux iso without usb on corrupted bios of lenovo laptops">
-    <meta property="og:description" content="Grub2 have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.">
-    <meta property="og:url" content="https://shubham0d.github.io/how-to-boot-linux-iso-without-usb-on-corrupted-bios-of-lenovo-laptops/">
-    <meta property="og:image" content="https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg">
-    <meta property="article:published_time" content="2017-12-26T20:19:49.000Z">
-    <meta property="article:modified_time" content="2017-12-27T11:34:47.000Z">
+    <meta property="og:title" content="Data Storage virtualization using sparse file in Linux">
+    <meta property="og:description" content="Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.">
+    <meta property="og:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux/">
+    <meta property="og:image" content="https://shubham0d.github.io/content/images/2017/12/14.PNG">
+    <meta property="article:published_time" content="2017-12-27T20:30:41.000Z">
+    <meta property="article:modified_time" content="2017-12-28T07:48:36.000Z">
+    <meta property="article:tag" content="Virtualization">
     <meta property="article:tag" content="Linux">
-    <meta property="article:tag" content="Firmware">
+    <meta property="article:tag" content="Cloud computing">
+    <meta property="article:tag" content="Tutorial">
     
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="How to boot linux iso without usb on corrupted bios of lenovo laptops">
-    <meta name="twitter:description" content="Grub2 have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.">
-    <meta name="twitter:url" content="https://shubham0d.github.io/how-to-boot-linux-iso-without-usb-on-corrupted-bios-of-lenovo-laptops/">
-    <meta name="twitter:image" content="https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg">
+    <meta name="twitter:title" content="Data Storage virtualization using sparse file in Linux">
+    <meta name="twitter:description" content="Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.">
+    <meta name="twitter:url" content="https://shubham0d.github.io/data-storage-virtualization-in-linux/">
+    <meta name="twitter:image" content="https://shubham0d.github.io/content/images/2017/12/14.PNG">
     <meta name="twitter:label1" content="Written by">
     <meta name="twitter:data1" content="Shubham Dubey">
     <meta name="twitter:label2" content="Filed under">
-    <meta name="twitter:data2" content="Linux, Firmware">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="675">
+    <meta name="twitter:data2" content="Virtualization, Linux, Cloud computing, Tutorial">
+    <meta property="og:image:width" content="1022">
+    <meta property="og:image:height" content="575">
     
     <script type="application/ld+json">
 {
@@ -59,18 +61,18 @@
         "url": "https://shubham0d.github.io/author/shubham0d/",
         "sameAs": []
     },
-    "headline": "How to boot linux iso without usb on corrupted bios of lenovo laptops",
-    "url": "https://shubham0d.github.io/how-to-boot-linux-iso-without-usb-on-corrupted-bios-of-lenovo-laptops/",
-    "datePublished": "2017-12-26T20:19:49.000Z",
-    "dateModified": "2017-12-27T11:34:47.000Z",
+    "headline": "Data Storage virtualization using sparse file in Linux",
+    "url": "https://shubham0d.github.io/data-storage-virtualization-in-linux/",
+    "datePublished": "2017-12-27T20:30:41.000Z",
+    "dateModified": "2017-12-28T07:48:36.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg",
-        "width": 1200,
-        "height": 675
+        "url": "https://shubham0d.github.io/content/images/2017/12/14.PNG",
+        "width": 1022,
+        "height": 575
     },
-    "keywords": "Linux, Firmware",
-    "description": "Grub2 have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.",
+    "keywords": "Virtualization, Linux, Cloud computing, Tutorial",
+    "description": "Learn how to use file storage in Staas services. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(*/dev/sda*) can be done on that with some little tricks or manipulation.",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://shubham0d.github.io/"
@@ -102,63 +104,83 @@
         <article class="post">
 
             <header class="post-header">
-                <h1 class="post-title">How to boot linux iso without usb on corrupted bios of lenovo laptops</h1>
+                <h1 class="post-title">Data Storage virtualization in Linux (Part 1)</h1>
                 <section class="post-meta">
                     <p class="author">by <a href="../../author/shubham0d/index.html">Shubham Dubey</a></p>
-                    <time class="post-date" datetime="2017-12-27">2017-12-27</time>
+                    <time class="post-date" datetime="2017-12-28">2017-12-28</time>
                 </section>
             </header>
             <figure class="post-image">
-                <amp-img src="https://shubham0d.github.io/content/images/2017/12/137735i64B079D682B7AF5E.jpeg" width="600" height="400" layout="responsive"></amp-img>
+                <amp-img src="https://shubham0d.github.io/content/images/2017/12/14.PNG" width="600" height="400" layout="responsive"></amp-img>
             </figure>
             <section class="post-content">
 
-                <div class="kg-card-markdown"><p>Recent bug(<a href="//bugs.launchpad.net/ubuntu/+source/linux/+bug/1734147?lipi=urn%3Ali%3Apage%3Ad_flagship3_pulse_read%3BpVpEnVj0SW6pQWfu1cO1%2BA%3D%3D">link</a>) in ubuntu 17.10 has become a great pain for lenovo laptop users(also some acer and toshiba laptop models) as their bios get corrupted due some unexpected behavior of intel driver in linux kernel. Because of this bug the users are not able to change their bios settings anymore and even the most important part is that the USB booting is not possible anymore since USB is not recognized in boot options. If you are a distrohopper like me or you want to install or switch to another distribution then this bug can be your nightmare because <em><strong>you are stuck in using ubuntu only</strong></em>.</p>
-<p><em>Let's not get terrified</em>, because their is alternative method to install linux distribution without using usb or any other external media. This method may also be useful for other distrohoppers who want to save time in creating bootable media and also want to save yourself from inserting usb on your system every time, to try live distributions.</p>
-<h1 id="whatcausingtheissue">What causing the issue</h1>
-<p>I am not expert on this but as mention in the bug description it is caused by <em>intel-spi-</em> drivers in the kernel which have altered some bios related code. Due to closed nature of intel bios it is difficult to find out what exactly has altered. It was mentioned by ubuntu developers that patch for this issue will save future system to get affected but already affected user have only way to solve this issue by changing their BIOS chip. So, those who are not ready to go for this solution but want to install another distribution can use below method.</p>
-<h1 id="bootingdirectlyfromisopresentinharddrive">Booting directly from iso present in hard drive</h1>
-<p><em>Grub2</em> have the capability to boot directly from iso file present in any of your hard drive storage. Using this feature most Linux distributions as well as popular rescue CDs can be booted directly from an ISO file.</p>
-<h2 id="buthow">But How?</h2>
-<br>
-<ul>
-<li>You need to download the iso of distribution you want to install and place it at any known location inside one of your partitions.</li>
-</ul>
-<p>For demonstration I am using pop!_os(<a href="https://system76.com/pop">link</a>) iso  and save it inside my <em>root(sda2)</em> partition inside folder <em>/home/hackintosh/iso/</em> .<br>
-</p>
-<ul>
-<li>First rename the file to any simple name (<em>pop.iso</em> in my case) to make things easier.</li>
-<li>Now open the iso through any archive manager.</li>
-<li>Go inside casper folder and view its contain.</li>
-</ul>
-<p></p>
-<ul>
-<li>The file with <em><strong>vmlinuz.efi</strong></em> or similar name is your kernel file and <em><strong>initrd.gz</strong></em>( or similar name) is your initial ramdisk whose name you require in next step.</li>
-<li>Now open file <em>/etc/grub.d/40_custom</em> and add this menuentry at the end.</li>
-</ul>
-<pre><code>     menuentry "Pop up" {
-     loopback loop (hd0,2)/home/hackintosh/iso/pop.iso
-     linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename   /home/hackintoshiso/pop.iso noprompt noeject
-     initrd (loop)/casper/initrd.gz
-   }
+                <div class="kg-card-markdown"><p>We can't deny the fact that traditional model of data management and hosting has been changed and user want their data/resources to be centralized and much flexible. By the innovation of virtualization technology it is become much more easier for large organization and even small businesses to centralized not only their storage but also every other thing they came across in IT world. But due to rapid increase in structured and non-structured data, a nice management for storage is required and resources have not to be wasted.</p>
+<p>If we talk about storage as a service(Staas) in cloud computing, if you are a cloud service provider then lots of your resources get wasted since once you allocate a fix storage space to any client, its lots of part get useless since he never use them at once and you are not allowed to allocate them to others. To solve or minimize problem like that, it will be a good initiative to use file data storage as shared storage solution rather then object storage or storage attached network (SAN).<br>
+In this article I will try to get you through step by step procedure of using and managing file storage solution and also uses of <em>qemu-img</em> virtualization. I will even try to get you through some new techniques/operations of disk virtualization which can be really useful at some point to your cloud server.<br>
+I have used all simple techniques which can be easily understandable and are not so eye catching but will really help you at different level of storage system development and management.</p>
+<p><strong>Note:</strong><br>
+All tools used are generally available on most on the linux system, if not then can be easily downloadable via your default online repository. The tested system for these commands is <em>RHEL 7.0</em> but they will work on other linux system in same way or with little steps rearrangements.</p>
+<h2 id="whatisfilestorage">What is file storage?</h2>
+<p>If you are a Staas provider you will one day definitely come across a problem that lots of your storage actually get wasted since if a user purchases 10GB of storage space from you,then you are forced to allocate him his 10GB regardless of the fact that he not gonna use all of his space at once. Another frequent problem can be if your data storage have 100 GB storage left and you are thinking to buy new storage disk in few days. If in the mean time if someone unexpectedly demands you 200 GB storage then you have to refuse him to provide that. But a good provider is which who fulfill all users  requests and provide 24/7 service. So a better solution for that is to use file storage. Through file storage you can scale your storage according to data inside it and even allocate that much of space which you even don't have.</p>
+<p>File Storage are rely on the fact that everything in your operating system is a file. In file storage we create a file and use it as our virtual partition then format it in desire file system and mount it. All the operation we do in our real disk partition(<em>/dev/sda</em>) can be done on that with some little tricks or manipulation. For this procedure we use sparse images as our disks file.</p>
+<h3 id="sowhataresparsefile">So, what are sparse file?</h3>
+<p>A sparse file is a specific type of file which aims to use file system space more efficiently by using metadata to represent empty blocks. In the case of a sparse file, blocks are allocated and written dynamically as the actual data is written, rather than at the time the file is created. So the point is if you create a 10Gb sparse file it will not even take 1Mb of your disk space but its property info will show 10GB as it is the allocated space.So lets start the procedure we need to follow with spase file.</p>
+<p>A sparse file can be created by either using <em>truncate</em> or <em>dd</em> utility in linux (another tools are also available).</p>
+<pre><code>$truncate --size=1GB test.img
+</code></pre>
+<p>This will create a 1Gb sparse image <em>test.img</em>. To get same result with dd use</p>
+<pre><code>$dd if=/dev/zero of=test.img bs=1024 count=0 seek=$[1024*1000]
+</code></pre>
+<p>here <em>bs</em> is block size and size is provided by <em>seek</em>, you can also use this for simplicity</p>
+<pre><code>$dd if=/dev/zero of=test.img bs=1 count=0 seek=1G
+</code></pre>
+<p>if you want to allocate the whole disk space at once(which is not a good solution in our case) then you can use <em>fallocate</em> for that</p>
+<pre><code>$fallocate -l 1G test.img
 </code></pre>
 <blockquote>
-<p>Here in <em>(hd0,2)</em> '0' represent my internal hard disk(sda) and '2' represent my partition number(sda2).</p>
-</blockquote>
-<blockquote>
-<p>In front of linux entry is your kernel name vmlinuz.efi and in front of initrd is initrd.gz file.</p>
-</blockquote>
-<ul>
-<li>Now save this file and run command <em>update-grub</em>.</li>
-</ul>
-<pre><code>$sudo update-grub #or sudo grub-mkconfig -o /boot/grub/grub.cfg
+<p><em><strong>A little fun trick:</strong></em><br>
+Can I create a 2TB partition on my 1Tb hard disk?<br>
+the ans is yes!.Since sparse file have property to not take the space while creation hence you can use them to do that</p>
+<pre><code>$truncate –size=2TB mylargefile.img
 </code></pre>
-<p>Once the command complete you can reboot your system.</p>
-<p>Inside the boot menu you will get a new entry named '<em>Pop up</em>' which you can select to boot.</p>
-<p>You can run the distribution as Live(if supported) or install it. If you want to perform an installation from the same ISO, you'd need to unmount the ISO image first</p>
-<pre><code>$sudo umount -l /isodevice
+<p>create any desired file system on it</p>
+<pre><code>$mkfs.ext2 mylargefile.img
+$mount mylargefile.img /mnt/
 </code></pre>
-<p>Now after knowing this you don't need bootable media anymore.<strong>Cheers!</strong></p>
+<p>now you have a 2Tb partition which you can show to your techie friend to impress. :p</p>
+</blockquote>
+<p>After creating the file you can format it and directly mount it to use as your storage but to make it possible to do lots of disk operations, it first have to connect to loop device using <em>losetup</em> utility. To attach the file to your loop device use</p>
+<pre><code>$losetup -f test.img
+</code></pre>
+<p>were <em>test.img</em> is your formated file. To see all such file or block device connected to loop device use</p>
+<pre><code>$losetup -a
+</code></pre>
+<p>you can easily <em>grep</em> the last created loop device by</p>
+<pre><code>$losetup -a | tail -1
+</code></pre>
+<p>After creating the loop device its time to format it. You can use any file system but my recommendation is using ext2 file system(the reason will be explained later).<br>
+To formate use <em>mkfs</em> utils</p>
+<pre><code>$mkfs.ext2 /dev/loop0
+</code></pre>
+<p>If you are working on big data management then <em>xfs filesystem</em> have to be preferred because it works well on handling large file and support larger inode data.<br>
+Now you can mount your formatted loop device to use as your virtual storage to share</p>
+<pre><code>$mount /dev/loop0 /mnt/
+</code></pre>
+<p>To share it across network using service like nfs,open <em>/etc/exports</em> add this entry</p>
+<pre><code>$cat /etc/exports
+/mnt/	*(rw,rsync,no_root_squash)
+</code></pre>
+<p>close it and restart the <em>nfs</em> service by</p>
+<pre><code>$service nfsd restart
+</code></pre>
+<p>once you put the data inside the device you can check its original occupied size by using <em>qemu-img</em> utility</p>
+<pre><code>$qemu-img info test.img
+</code></pre>
+<p>or by <em>du</em> command</p>
+<pre><code>$du -h test.img
+</code></pre>
+<p>Since our file storage is ready, in next part we will look into common disk operations you can do with file storage.<em>Stay tuned!</em></p>
 </div>
 
             </section>
