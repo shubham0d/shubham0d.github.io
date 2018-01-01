@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0"
                 xmlns:html="//www.w3.org/TR/REC-html40"
                 xmlns:image="//www.google.com/schemas/sitemap-image/1.1"
-                xmlns:sitemap="http//www.sitemaps.org/schemas/sitemap/0.9"
+                xmlns:sitemap="//www.sitemaps.org/schemas/sitemap/0.9"
                 xmlns:xsl="//www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
     <xsl:template match="/">
